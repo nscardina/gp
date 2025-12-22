@@ -1,4 +1,5 @@
 import type HitboxShape from "../physics/HitboxShape"
+import { CirclesIntersect, PointInsideCircle } from "./IntersectionAlgorithms"
 import Point from "./Point"
 
 export default class Circle implements HitboxShape {
@@ -38,7 +39,15 @@ export default class Circle implements HitboxShape {
     }
 
     collidesWith(shape: HitboxShape): boolean {
-        return false
+        if (shape instanceof Point) {
+            return PointInsideCircle(shape, this)
+        }
+
+        if (shape instanceof Circle) {
+            return CirclesIntersect(shape, this)
+        }
+        
+        throw `Unimplemented collision: ${shape} with circle`
     }
 
     toString() {
