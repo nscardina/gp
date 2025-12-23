@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# generated level files - must create them with the make_level_zip script
+public/*.gpc

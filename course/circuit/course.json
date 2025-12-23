@@ -1,0 +1,45 @@
+{
+    "images": {
+        "circuit_bg_image": "img/circuit.png",
+        "water0": "img/water0.png",
+        "water1": "img/water1.png",
+        "water2": "img/water2.png",
+        "water3": "img/water3.png",
+        "water4": "img/water4.png",
+        "water5": "img/water5.png",
+        "water6": "img/water6.png",
+        "water7": "img/water7.png"
+    },
+    "background_sprites": [
+        {
+            "x": 140,
+            "y": 160,
+            "animation": {
+                "delay": 25
+            },
+            "repeat": {
+                "x": 15,
+                "y": 18
+            },
+            "images": [
+                "water0",
+                "water1",
+                "water2",
+                "water3",
+                "water4",
+                "water5",
+                "water6",
+                "water7"
+            ]
+        },
+        {
+            "x": 0,
+            "y": 0,
+            "animation": null,
+            "repeat": null,
+            "images": [
+                "circuit_bg_image"
+            ]
+        }
+    ]
+}

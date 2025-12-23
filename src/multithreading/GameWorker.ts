@@ -1,6 +1,7 @@
 import { makeDefaultKeybindMap, makeKeyPressedMap } from "../keybind/Keyboard";
+import Course from "../level/Course";
 import Car from "../physics/Car";
-import LoadImage from "../util/LoadImage"
+import { loadImage }  from "../util/LoadImage"
 import { isIPCKeyDownEventObject, isIPCKeyUpEventObject } from "./IPC";
 
 let keybindMap = makeDefaultKeybindMap()
@@ -12,6 +13,8 @@ let car = new Car()
 
 let carImg: any = null
 
+let circuit: any = null
+
 onmessage = async (e) => {
 
   if (e.data.type === "START") {
@@ -19,9 +22,14 @@ onmessage = async (e) => {
     offscreen = new OffscreenCanvas(width / 4, height / 4);
     ctx = offscreen.getContext('2d');
     
-    carImg = await LoadImage('/red_kart.png')
-    const img = await LoadImage('/circuit.png');
+    carImg = await loadImage('/red_kart.png')
+    const img = await loadImage('/circuit.png');
+
+    circuit = await Course.loadCourse("/circuit.gpc")
+
     render(img);
+
+    
   }
 
   if ("type" in e.data && typeof(e.data.type) === "string") {
@@ -41,12 +49,7 @@ function render(img: any) {
   car.carUpdate(keybindMap, keyPressedMap)
 
   // draw background
-  ctx.save();
-  ctx.translate(offscreen.width / 2, offscreen.height / 2)
-  ctx.rotate(-car.angle - Math.PI / 2);
-  ctx.translate(-car.hitbox.getCenter().x, -car.hitbox.getCenter().y)
-  ctx.drawImage(img, 0, 0)
-  ctx.restore();
+  circuit.render(ctx, offscreen.width, offscreen.height, car)
 
   // draw car
   ctx.save();
