@@ -3,6 +3,22 @@ import Circle from "./Circle"
 import { PointInsideCircle, PointInsidePolygon } from "./IntersectionAlgorithms"
 import Polygon from "./Polygon"
 
+export type PointJSONData = {
+    x: number,
+    y: number
+}
+
+export function isPointJSONData(object: unknown): object is PointJSONData {
+    return (
+        typeof(object) === "object"
+        && object !== null
+        && "x" in object
+        && typeof(object.x) === "number"
+        && "y" in object
+        && typeof(object.y) === "number"
+    )
+}
+
 export default class Point implements HitboxShape {
     #x: number
     #y: number
@@ -55,6 +71,14 @@ export default class Point implements HitboxShape {
         }
 
         throw `Error: Unable to calculate whether point collides with ${shape}`
+    }
+
+    static deserialize(json: unknown): Point {
+        if (isPointJSONData(json)) {
+            return new Point(json.x, json.y)
+        } else {
+            throw `Unable to deserialize ${json} to Point`
+        }
     }
 
     toString() {

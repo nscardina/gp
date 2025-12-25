@@ -1,6 +1,18 @@
 import type HitboxShape from "../physics/HitboxShape";
 import { PointInsidePolygon } from "./IntersectionAlgorithms";
-import Point from "./Point";
+import Point, { isPointJSONData, type PointJSONData } from "./Point";
+
+export type PolygonJSONData = {
+    points: PointJSONData[]
+}
+
+export function isPolygonJSONData(object: unknown): object is PolygonJSONData {
+    return typeof(object) === "object"
+    && object !== null
+    && "points" in object
+    && Array.isArray(object.points)
+    && object.points.every(element => isPointJSONData(element))
+}
 
 export default class Polygon implements HitboxShape {
     #points: Point[]
@@ -49,6 +61,14 @@ export default class Polygon implements HitboxShape {
         else {
             throw `Unimplemented collision: ${shape} with polygon`
         }
+    }
+
+    static deserialize(json: unknown): Polygon {
+        if (isPolygonJSONData(json)) {
+            return new Polygon(json.points.map(point => Point.deserialize(point)))
+        }
+
+        throw `Unable to deserialize "${json}" to Polygon`
     }
 }
 

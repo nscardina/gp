@@ -2,6 +2,11 @@ import JSZip from "jszip"
 import { loadImageFromZip } from "../util/LoadImage"
 import BackgroundSprite, { isBackgroundSpriteJSONData } from "./BackgroundSprite"
 import type Car from "../physics/Car"
+import { CollisionArea, getCollisionEffectDebugColor, isCollisionAreaJSONData } from "./Collision"
+import type HitboxShape from "../physics/HitboxShape"
+import Polygon from "../geometry/Polygon"
+import { colorToString, type Color } from "../geometry/Color"
+import { isDebug } from "../Debug"
 
 export default class Course {
 
@@ -9,13 +14,42 @@ export default class Course {
 
     #backgroundSprites: BackgroundSprite[]
 
+    #collisionAreas: CollisionArea[]
+
     constructor(
         images: Map<string, ImageBitmap>,
-        backgroundSprites: BackgroundSprite[]
+        backgroundSprites: BackgroundSprite[],
+        collisionAreas: CollisionArea[]
     ) {
         this.#images = images
         this.#backgroundSprites = backgroundSprites
+        this.#collisionAreas = collisionAreas
     }
+
+    get images(): Map<string, ImageBitmap> {
+        return this.#images
+    }
+
+    set images(images: Map<string, ImageBitmap>) {
+        this.#images = images
+    }
+
+    get backgroundSprites(): BackgroundSprite[] {
+        return this.#backgroundSprites
+    }
+
+    set backgroundSprites(backgroundSprites: BackgroundSprite[]) {
+        this.#backgroundSprites = backgroundSprites
+    }
+
+    get collisionAreas(): CollisionArea[] {
+        return this.#collisionAreas
+    }
+
+    set collisionAreas(collisionAreas: CollisionArea[]) {
+        this.#collisionAreas = collisionAreas
+    }
+
 
     static async loadCourse(path: string): Promise<Course> {
         try {
@@ -60,9 +94,22 @@ export default class Course {
                 return BackgroundSprite.deserialize(s, imageMap)
             })
 
+            if (
+                !("collision" in courseJson)
+                || !Array.isArray(courseJson.collision)
+                || !courseJson.collision.every(c => isCollisionAreaJSONData(c))
+            ) {
+                throw "Malformed course.json collision section"
+            }
+
+            const collisionAreas = courseJson.collision.map(c => {
+                return CollisionArea.deserialize(c)
+            })
+
             const course = new Course(
                 imageMap,
-                backgroundSprites
+                backgroundSprites,
+                collisionAreas
             )
             return course
 
@@ -73,36 +120,91 @@ export default class Course {
     }
 
     render(
-        ctx: CanvasRenderingContext2D,
+        ctx: OffscreenCanvasRenderingContext2D,
         offscreenWidth: number,
         offscreenHeight: number,
         playerCar: Car
     ) {
         for (const sprite of this.#backgroundSprites) {
-            ctx.save();
-            ctx.translate(offscreenWidth / 2, offscreenHeight / 2)
-            ctx.rotate(-playerCar.angle - Math.PI / 2);
-            ctx.translate(-playerCar.hitbox.getCenter().x, -playerCar.hitbox.getCenter().y)
-
-            const img = sprite.currentImage
-
-            if (sprite.repeat) {
-                for (let y = 0; y < sprite.repeatY; y++) {
-                    for (let x = 0; x < sprite.repeatX; x++) {
-                        ctx.drawImage(
-                            img, 
-                            sprite.x + x * img.width, 
-                            sprite.y + y * img.height
-                        )
-                    }
-                }
-            } else {
-                ctx.drawImage(img, sprite.x, sprite.y)
-            }
-
-            
-            ctx.restore();
+            this.renderSprite(ctx, offscreenWidth, offscreenHeight, playerCar, sprite)
         }
+
+        if (isDebug()) {
+            for (const area of this.#collisionAreas) {
+                if (area.shape instanceof Polygon) {
+                    this.renderPolygon(ctx, offscreenWidth, offscreenHeight, playerCar, area.shape, getCollisionEffectDebugColor(area.effect))
+                }
+            }
+        }
+        
+    }
+
+    renderSprite(
+        ctx: OffscreenCanvasRenderingContext2D,
+        offscreenWidth: number,
+        offscreenHeight: number,
+        playerCar: Car,
+        sprite: BackgroundSprite
+    ) {
+        ctx.save();
+        ctx.translate(offscreenWidth / 2, offscreenHeight / 2)
+        ctx.rotate(-playerCar.angle - Math.PI / 2);
+        ctx.translate(-playerCar.hitbox.getCenter().x, -playerCar.hitbox.getCenter().y)
+
+        const img = sprite.currentImage
+
+        if (sprite.repeat) {
+            for (let y = 0; y < sprite.repeatY; y++) {
+                for (let x = 0; x < sprite.repeatX; x++) {
+                    ctx.drawImage(
+                        img, 
+                        sprite.x + x * img.width, 
+                        sprite.y + y * img.height
+                    )
+                }
+            }
+        } else {
+            ctx.drawImage(img, sprite.x, sprite.y)
+        }
+
+        ctx.restore()
+    }
+
+    renderPolygon(
+        ctx: OffscreenCanvasRenderingContext2D,
+        offscreenWidth: number,
+        offscreenHeight: number,
+        playerCar: Car,
+        polygon: Polygon,
+        color: Color
+    ) {
+        ctx.save();
+        ctx.translate(offscreenWidth / 2, offscreenHeight / 2)
+        ctx.rotate(-playerCar.angle - Math.PI / 2);
+        ctx.translate(-playerCar.hitbox.getCenter().x, -playerCar.hitbox.getCenter().y)
+
+        const points = polygon.points
+
+        ctx.beginPath()
+        if (points.length > 0) {
+            ctx.moveTo(points[0].x, points[0].y)
+        }
+
+        for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y)
+        }
+
+        ctx.lineTo(points[0].x, points[0].y)
+        
+        color.alpha = 1.0
+        ctx.strokeStyle = colorToString(color)
+        color.alpha = 0.3
+        ctx.fillStyle = colorToString(color)
+        
+        ctx.fill()
+        ctx.stroke()
+
+        ctx.restore()
     }
 
 }

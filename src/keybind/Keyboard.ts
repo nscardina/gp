@@ -1,4 +1,4 @@
-import { DEBUG } from "../Debug"
+import { isDebug } from "../Debug"
 import { makeIPCKeyDownEventObject, makeIPCKeyUpEventObject } from "../multithreading/IPC"
 import { IterAny } from "../util/IteratorUtils"
 
@@ -74,7 +74,7 @@ export function setKeyListener(keybindMap: KeybindMap, gameWorker: Worker) {
     const keydownListener: (this: Window, ev: KeyboardEvent) => any = event => {
         if (IterAny(keybindMap.values(), value => value === event.key)) {
             gameWorker.postMessage(makeIPCKeyDownEventObject(event.key))
-            if (DEBUG) {
+            if (isDebug()) {
                 console.log(`"${event.key}" pressed`)
             }
         }
@@ -83,7 +83,7 @@ export function setKeyListener(keybindMap: KeybindMap, gameWorker: Worker) {
     const keyupListener: (this: Window, ev: KeyboardEvent) => any = event => {
         if (IterAny(keybindMap.values(), value => value === event.key)) {
             gameWorker.postMessage(makeIPCKeyUpEventObject(event.key))
-            if (DEBUG) {
+            if (isDebug()) {
                 console.log(`"${event.key}" released`)
             }
         }

@@ -1,0 +1,20 @@
+body {
+    margin: 0px;
+}
+
+canvas {
+    aspect-ratio: 4/3;
+    width: 100vw;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (min-aspect-ratio: 4/3) {
+    canvas {
+        width: unset;
+        min-width: 0;
+        max-height: 100vh;
+        
+    }
+}

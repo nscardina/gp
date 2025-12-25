@@ -1,3 +1,4 @@
+import { DESIRED_MS_PER_TICK } from "../multithreading/GameLoop";
 import type HitboxShape from "./HitboxShape";
 
 export default class PhysicsObject {
@@ -12,12 +13,27 @@ export default class PhysicsObject {
 
     #angle: number
 
-    constructor(hitbox: HitboxShape, maximumVelocity: number, minimumVelocity?: number) {
+    #angularVelocity: number
+
+    #maximumAngularVelocity: number
+
+    #minimumAngularVelocity: number
+
+    constructor(
+        hitbox: HitboxShape, 
+        maximumVelocity: number, 
+        maximumAngularVelocity: number,
+        minimumVelocity?: number,
+        minimumAngularVelocity?: number
+    ) {
         this.#hitbox = hitbox
         this.#velocity = 0
         this.#maximumVelocity = maximumVelocity
         this.#minimumVelocity = minimumVelocity ?? -maximumVelocity
         this.#angle = 0
+        this.#angularVelocity = 0
+        this.#maximumAngularVelocity = maximumAngularVelocity
+        this.#minimumAngularVelocity = minimumAngularVelocity ?? -maximumAngularVelocity
     }
 
     get hitbox(): HitboxShape {
@@ -44,6 +60,14 @@ export default class PhysicsObject {
         this.#maximumVelocity = maximumVelocity
     }
 
+    get minimumVelocity(): number {
+        return this.#minimumVelocity
+    }
+
+    set minimumVelocity(minimumVelocity: number) {
+        this.#minimumVelocity = minimumVelocity
+    }
+
     get angle(): number {
         return this.#angle
     }
@@ -52,10 +76,36 @@ export default class PhysicsObject {
         this.#angle = angle
     }
 
-    update() {
+    get angularVelocity(): number {
+        return this.#angularVelocity
+    }
+
+    set angularVelocity(angularVelocity: number) {
+        this.#angularVelocity = Math.max(Math.min(angularVelocity, this.#maximumAngularVelocity), this.#minimumAngularVelocity)
+    }
+
+    get maximumAngularVelocity(): number {
+        return this.#maximumAngularVelocity
+    }
+
+    set maximumAngularVelocity(maximumAngularVelocity: number) {
+        this.#maximumAngularVelocity = maximumAngularVelocity
+    }
+
+    get minimumAngularVelocity(): number {
+        return this.#minimumAngularVelocity
+    }
+
+    set minimumAngularVelocity(minimumAngularVelocity: number) {
+        this.#minimumAngularVelocity = minimumAngularVelocity
+    }
+
+    update(deltaTime: number) {
+        const timeFactor = deltaTime / DESIRED_MS_PER_TICK
+
         this.#hitbox.translate(
-            this.#velocity * Math.cos(this.#angle),
-            this.#velocity * Math.sin(this.#angle)
+            this.#velocity * Math.cos(this.#angle) * timeFactor,
+            this.#velocity * Math.sin(this.#angle) * timeFactor
         )
     }
 

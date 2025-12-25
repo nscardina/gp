@@ -1,6 +1,22 @@
 import type HitboxShape from "../physics/HitboxShape"
 import { CirclesIntersect, PointInsideCircle } from "./IntersectionAlgorithms"
-import Point from "./Point"
+import Point, { isPointJSONData, type PointJSONData } from "./Point"
+
+export type CircleJSONData = {
+    center: PointJSONData,
+    radius: number
+}
+
+export function isCircleJSONData(object: unknown): object is CircleJSONData {
+    return (
+        typeof(object) === "object"
+        && object !== null
+        && "center" in object
+        && isPointJSONData(object.center)
+        && "radius" in object
+        && typeof(object.radius) === "number"
+    )
+}
 
 export default class Circle implements HitboxShape {
 
@@ -48,6 +64,14 @@ export default class Circle implements HitboxShape {
         }
         
         throw `Unimplemented collision: ${shape} with circle`
+    }
+
+    static deserialize(json: unknown): Circle {
+        if (isCircleJSONData(json)) {
+            return new Circle(Point.deserialize(json.center), json.radius)
+        }
+
+        throw `Unable to deserialize ${json} to Circle`
     }
 
     toString() {
