@@ -1,11 +1,64 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="/public/main.css" type="text/css">
+    <link rel="stylesheet" href="/main.css" type="text/css">
   </head>
 
   <body>
-    <canvas id="gameCanvas" width="640" height="480"></canvas>
+    
+    <div id="gameContainer">
+
+      <!-- Main Menu -->
+      <div id="mainMenu" class="vertical-container">
+        <div class="logo-container">
+          <object class="waving-flag" data="/waving_flag.svg" type="image/svg+xml"></object>
+          <h1 class="gameLogo">
+            <span class="green">Grand</span> <span class="yellow">Prix</span></h1>
+        </div>
+        <div class="vertical-container">
+          <button class="gp-button" id="mainMenuPlayButton">Play</button>
+          <button class="gp-button" id="mainMenuSettingsButton">Settings</button>
+        </div>
+      </div>
+
+      <!-- Choose Car Menu -->
+      <div id="chooseCarMenu" class="vertical-container">
+        <h1 class="gp-title">
+          Choose Kart
+        </h1>
+        <div class="horizontal-container">
+          <button id="chooseCarRedButton" class="vertical-container gp-button">
+            <img src="/car/red_car.png">
+            <p>Red</p>
+          </button>
+          <button id="chooseCarGreenButton" class="vertical-container gp-button">
+            <img src="/car/green_car.png">
+            <p>Green</p>
+          </button>
+          <button id="chooseCarBlueButton" class="vertical-container gp-button">
+            <img src="/car/blue_car.png">
+            <p>Blue</p>
+          </button>
+          <button id="chooseCarPurpleButton" class="vertical-container gp-button">
+            <img src="/car/purple_car.png">
+            <p>Purple</p>
+          </button>
+        </div>
+        <button class="gp-button" id="chooseCarMenuBackButton">Back</button>
+      </div>
+
+    <div id="gameCanvasContainer">
+      <canvas id="gameCanvas" width="640" height="480"></canvas>
+      <span id="debugText"></span>
+    </div>
+
+    <div id="pauseMenuContainer" class="vertical-container">
+      <h1 class="gp-title">Paused</h1>
+      <button class="gp-button" id="pauseMenuQuitButton">Quit</button>
+    </div>
+      
+    </div>
+
     <script src="./src/Game.ts" type="module"></script>
   </body>
 </html>

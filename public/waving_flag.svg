@@ -1,0 +1,180 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="-10 -10 310 180"
+  width="300"
+  height="160"
+>
+  <defs>
+    <style>
+      .square {
+        width: 20px;
+        height: 20px;
+        transform-origin: center center;
+        animation: wave 2s ease-in-out infinite;
+      }
+
+      @keyframes wave {
+        0%, 100% { transform: translateY(0) skewX(0deg); }
+        25% { transform: translateY(-6px) skewX(-10deg); }
+        50% { transform: translateY(-10px) skewX(0deg); }
+        75% { transform: translateY(-6px) skewX(10deg); }
+      }
+    </style>
+  </defs>
+
+  <!-- 8 rows x 15 columns -->
+  <!-- Checkerboard pattern: alternate fill and offset each row -->
+
+  <!-- Row 0 -->
+  <g>
+    <rect x="0"   y="10"  class="square" fill="black" style="animation-delay:0s"/>
+    <rect x="20"  y="10"  class="square" fill="white" style="animation-delay:0.05s"/>
+    <rect x="40"  y="10"  class="square" fill="black" style="animation-delay:0.1s"/>
+    <rect x="60"  y="10"  class="square" fill="white" style="animation-delay:0.15s"/>
+    <rect x="80"  y="10"  class="square" fill="black" style="animation-delay:0.2s"/>
+    <rect x="100" y="10"  class="square" fill="white" style="animation-delay:0.25s"/>
+    <rect x="120" y="10"  class="square" fill="black" style="animation-delay:0.3s"/>
+    <rect x="140" y="10"  class="square" fill="white" style="animation-delay:0.35s"/>
+    <rect x="160" y="10"  class="square" fill="black" style="animation-delay:0.4s"/>
+    <rect x="180" y="10"  class="square" fill="white" style="animation-delay:0.45s"/>
+    <rect x="200" y="10"  class="square" fill="black" style="animation-delay:0.5s"/>
+    <rect x="220" y="10"  class="square" fill="white" style="animation-delay:0.55s"/>
+    <rect x="240" y="10"  class="square" fill="black" style="animation-delay:0.6s"/>
+    <rect x="260" y="10"  class="square" fill="white" style="animation-delay:0.65s"/>
+    <rect x="280" y="10"  class="square" fill="black" style="animation-delay:0.7s"/>
+  </g>
+
+  <!-- Row 1 (offset pattern) -->
+  <g>
+    <rect x="0"   y="30"  class="square" fill="white" style="animation-delay:0.03s"/>
+    <rect x="20"  y="30"  class="square" fill="black" style="animation-delay:0.08s"/>
+    <rect x="40"  y="30"  class="square" fill="white" style="animation-delay:0.13s"/>
+    <rect x="60"  y="30"  class="square" fill="black" style="animation-delay:0.18s"/>
+    <rect x="80"  y="30"  class="square" fill="white" style="animation-delay:0.23s"/>
+    <rect x="100" y="30"  class="square" fill="black" style="animation-delay:0.28s"/>
+    <rect x="120" y="30"  class="square" fill="white" style="animation-delay:0.33s"/>
+    <rect x="140" y="30"  class="square" fill="black" style="animation-delay:0.38s"/>
+    <rect x="160" y="30"  class="square" fill="white" style="animation-delay:0.43s"/>
+    <rect x="180" y="30"  class="square" fill="black" style="animation-delay:0.48s"/>
+    <rect x="200" y="30"  class="square" fill="white" style="animation-delay:0.53s"/>
+    <rect x="220" y="30"  class="square" fill="black" style="animation-delay:0.58s"/>
+    <rect x="240" y="30"  class="square" fill="white" style="animation-delay:0.63s"/>
+    <rect x="260" y="30"  class="square" fill="black" style="animation-delay:0.68s"/>
+    <rect x="280" y="30"  class="square" fill="white" style="animation-delay:0.73s"/>
+  </g>
+
+  <!-- Row 2 -->
+  <g>
+    <rect x="0"   y="50"  class="square" fill="black" style="animation-delay:0.06s"/>
+    <rect x="20"  y="50"  class="square" fill="white" style="animation-delay:0.11s"/>
+    <rect x="40"  y="50"  class="square" fill="black" style="animation-delay:0.16s"/>
+    <rect x="60"  y="50"  class="square" fill="white" style="animation-delay:0.21s"/>
+    <rect x="80"  y="50"  class="square" fill="black" style="animation-delay:0.26s"/>
+    <rect x="100" y="50"  class="square" fill="white" style="animation-delay:0.31s"/>
+    <rect x="120" y="50"  class="square" fill="black" style="animation-delay:0.36s"/>
+    <rect x="140" y="50"  class="square" fill="white" style="animation-delay:0.41s"/>
+    <rect x="160" y="50"  class="square" fill="black" style="animation-delay:0.46s"/>
+    <rect x="180" y="50"  class="square" fill="white" style="animation-delay:0.51s"/>
+    <rect x="200" y="50"  class="square" fill="black" style="animation-delay:0.56s"/>
+    <rect x="220" y="50"  class="square" fill="white" style="animation-delay:0.61s"/>
+    <rect x="240" y="50"  class="square" fill="black" style="animation-delay:0.66s"/>
+    <rect x="260" y="50"  class="square" fill="white" style="animation-delay:0.71s"/>
+    <rect x="280" y="50"  class="square" fill="black" style="animation-delay:0.76s"/>
+  </g>
+
+  <!-- Row 3 -->
+  <g>
+    <rect x="0"   y="70"  class="square" fill="white" style="animation-delay:0.09s"/>
+    <rect x="20"  y="70"  class="square" fill="black" style="animation-delay:0.14s"/>
+    <rect x="40"  y="70"  class="square" fill="white" style="animation-delay:0.19s"/>
+    <rect x="60"  y="70"  class="square" fill="black" style="animation-delay:0.24s"/>
+    <rect x="80"  y="70"  class="square" fill="white" style="animation-delay:0.29s"/>
+    <rect x="100" y="70"  class="square" fill="black" style="animation-delay:0.34s"/>
+    <rect x="120" y="70"  class="square" fill="white" style="animation-delay:0.39s"/>
+    <rect x="140" y="70"  class="square" fill="black" style="animation-delay:0.44s"/>
+    <rect x="160" y="70"  class="square" fill="white" style="animation-delay:0.49s"/>
+    <rect x="180" y="70"  class="square" fill="black" style="animation-delay:0.54s"/>
+    <rect x="200" y="70"  class="square" fill="white" style="animation-delay:0.59s"/>
+    <rect x="220" y="70"  class="square" fill="black" style="animation-delay:0.64s"/>
+    <rect x="240" y="70"  class="square" fill="white" style="animation-delay:0.69s"/>
+    <rect x="260" y="70"  class="square" fill="black" style="animation-delay:0.74s"/>
+    <rect x="280" y="70"  class="square" fill="white" style="animation-delay:0.79s"/>
+  </g>
+
+  <!-- Row 4 -->
+  <g>
+    <rect x="0"   y="90"  class="square" fill="black" style="animation-delay:0.12s"/>
+    <rect x="20"  y="90"  class="square" fill="white" style="animation-delay:0.17s"/>
+    <rect x="40"  y="90"  class="square" fill="black" style="animation-delay:0.22s"/>
+    <rect x="60"  y="90"  class="square" fill="white" style="animation-delay:0.27s"/>
+    <rect x="80"  y="90"  class="square" fill="black" style="animation-delay:0.32s"/>
+    <rect x="100" y="90"  class="square" fill="white" style="animation-delay:0.37s"/>
+    <rect x="120" y="90"  class="square" fill="black" style="animation-delay:0.42s"/>
+    <rect x="140" y="90"  class="square" fill="white" style="animation-delay:0.47s"/>
+    <rect x="160" y="90"  class="square" fill="black" style="animation-delay:0.52s"/>
+    <rect x="180" y="90"  class="square" fill="white" style="animation-delay:0.57s"/>
+    <rect x="200" y="90"  class="square" fill="black" style="animation-delay:0.62s"/>
+    <rect x="220" y="90"  class="square" fill="white" style="animation-delay:0.67s"/>
+    <rect x="240" y="90"  class="square" fill="black" style="animation-delay:0.72s"/>
+    <rect x="260" y="90"  class="square" fill="white" style="animation-delay:0.77s"/>
+    <rect x="280" y="90"  class="square" fill="black" style="animation-delay:0.82s"/>
+  </g>
+
+  <!-- Row 5 -->
+  <g>
+    <rect x="0"   y="110"  class="square" fill="white" style="animation-delay:0.15s"/>
+    <rect x="20"  y="110"  class="square" fill="black" style="animation-delay:0.2s"/>
+    <rect x="40"  y="110"  class="square" fill="white" style="animation-delay:0.25s"/>
+    <rect x="60"  y="110"  class="square" fill="black" style="animation-delay:0.3s"/>
+    <rect x="80"  y="110"  class="square" fill="white" style="animation-delay:0.35s"/>
+    <rect x="100" y="110"  class="square" fill="black" style="animation-delay:0.4s"/>
+    <rect x="120" y="110"  class="square" fill="white" style="animation-delay:0.45s"/>
+    <rect x="140" y="110"  class="square" fill="black" style="animation-delay:0.5s"/>
+    <rect x="160" y="110"  class="square" fill="white" style="animation-delay:0.55s"/>
+    <rect x="180" y="110"  class="square" fill="black" style="animation-delay:0.6s"/>
+    <rect x="200" y="110"  class="square" fill="white" style="animation-delay:0.65s"/>
+    <rect x="220" y="110"  class="square" fill="black" style="animation-delay:0.7s"/>
+    <rect x="240" y="110"  class="square" fill="white" style="animation-delay:0.75s"/>
+    <rect x="260" y="110"  class="square" fill="black" style="animation-delay:0.8s"/>
+    <rect x="280" y="110"  class="square" fill="white" style="animation-delay:0.85s"/>
+  </g>
+
+  <!-- Row 6 -->
+  <g>
+    <rect x="0"   y="130"  class="square" fill="black" style="animation-delay:0.18s"/>
+    <rect x="20"  y="130"  class="square" fill="white" style="animation-delay:0.23s"/>
+    <rect x="40"  y="130"  class="square" fill="black" style="animation-delay:0.28s"/>
+    <rect x="60"  y="130"  class="square" fill="white" style="animation-delay:0.33s"/>
+    <rect x="80"  y="130"  class="square" fill="black" style="animation-delay:0.38s"/>
+    <rect x="100" y="130"  class="square" fill="white" style="animation-delay:0.43s"/>
+    <rect x="120" y="130"  class="square" fill="black" style="animation-delay:0.48s"/>
+    <rect x="140" y="130"  class="square" fill="white" style="animation-delay:0.53s"/>
+    <rect x="160" y="130"  class="square" fill="black" style="animation-delay:0.58s"/>
+    <rect x="180" y="130"  class="square" fill="white" style="animation-delay:0.63s"/>
+    <rect x="200" y="130"  class="square" fill="black" style="animation-delay:0.68s"/>
+    <rect x="220" y="130"  class="square" fill="white" style="animation-delay:0.73s"/>
+    <rect x="240" y="130"  class="square" fill="black" style="animation-delay:0.78s"/>
+    <rect x="260" y="130"  class="square" fill="white" style="animation-delay:0.83s"/>
+    <rect x="280" y="130"  class="square" fill="black" style="animation-delay:0.88s"/>
+  </g>
+
+  <!-- Row 7 -->
+  <g>
+    <rect x="0"   y="150"  class="square" fill="white" style="animation-delay:0.21s"/>
+    <rect x="20"  y="150"  class="square" fill="black" style="animation-delay:0.26s"/>
+    <rect x="40"  y="150"  class="square" fill="white" style="animation-delay:0.31s"/>
+    <rect x="60"  y="150"  class="square" fill="black" style="animation-delay:0.36s"/>
+    <rect x="80"  y="150"  class="square" fill="white" style="animation-delay:0.41s"/>
+    <rect x="100" y="150"  class="square" fill="black" style="animation-delay:0.46s"/>
+    <rect x="120" y="150"  class="square" fill="white" style="animation-delay:0.51s"/>
+    <rect x="140" y="150"  class="square" fill="black" style="animation-delay:0.56s"/>
+    <rect x="160" y="150"  class="square" fill="white" style="animation-delay:0.61s"/>
+    <rect x="180" y="150"  class="square" fill="black" style="animation-delay:0.66s"/>
+    <rect x="200" y="150"  class="square" fill="white" style="animation-delay:0.71s"/>
+    <rect x="220" y="150"  class="square" fill="black" style="animation-delay:0.76s"/>
+    <rect x="240" y="150"  class="square" fill="white" style="animation-delay:0.81s"/>
+    <rect x="260" y="150"  class="square" fill="black" style="animation-delay:0.86s"/>
+    <rect x="280" y="150"  class="square" fill="white" style="animation-delay:0.91s"/>
+  </g>
+
+</svg>

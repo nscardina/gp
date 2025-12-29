@@ -1,3 +1,4 @@
+import { isDebug } from "../Debug"
 import { gameState } from "./GameState"
 
 export const DESIRED_FPS = 120
@@ -23,7 +24,7 @@ export const gameLoop: FrameRequestCallback = (timestamp: number) => {
 function update(deltaTime: number): RenderInfo | null {
     const state = gameState()
 
-    if (state === null) {
+    if (state === null || state.paused) {
         return null
     }
 
@@ -61,8 +62,24 @@ function render(renderInfo: RenderInfo | null) {
         ctx.restore();
     }
 
-    
+    setDebugText()
 
     const bitmap = offscreenCanvas.transferToImageBitmap();
-    postMessage({ bitmap }, [bitmap] as any)
+    postMessage({ type: "render", bitmap: bitmap }, [bitmap] as any)
+}
+
+function setDebugText() {
+    const state = gameState()
+
+    if (state === null || !isDebug()) {
+        postMessage({type: "debugText", text: ""})
+        return
+    }
+
+    const { playerCar } = state
+
+    
+    postMessage({type: "debugText", text: playerCar.debugText()})
+
+    
 }

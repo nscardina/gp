@@ -3,6 +3,7 @@ import type Course from "../level/Course"
 import type Car from "../physics/Car"
 
 export type GameState = {
+    paused: boolean,
     offscreenCanvas: OffscreenCanvas,
     ctx: OffscreenCanvasRenderingContext2D,
     course: Course,

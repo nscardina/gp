@@ -1,9 +1,9 @@
 import { makeDefaultKeybindMap, makeKeyPressedMap } from "../keybind/Keyboard";
 import Course from "../level/Course";
-import Car from "../physics/Car";
+import Car, { CarImagePath } from "../physics/Car";
 import { gameLoop } from "./GameLoop";
 import { gameState, setupGameState } from "./GameState";
-import { isIPCKeyDownEventObject, isIPCKeyUpEventObject } from "./IPC";
+import { isIPCInitGPMessageObject, isIPCKeyDownEventObject, isIPCKeyUpEventObject, isIPCSetPauseStateMessageObject } from "./IPC";
 
 
 onmessage = async (e) => {
@@ -16,12 +16,13 @@ onmessage = async (e) => {
 
     const circuit = await Course.loadCourse("/circuit.gpc")
 
-    const playerCar = new Car()
+    const playerCar = new Car(CarImagePath.RED)
 
     const keybindMap = makeDefaultKeybindMap()
     const keyPressedMap = makeKeyPressedMap(keybindMap)
 
     setupGameState({
+      paused: false,
       offscreenCanvas: offscreen,
       ctx: ctx,
       course: circuit,
@@ -31,12 +32,7 @@ onmessage = async (e) => {
       keyPressedMap: keyPressedMap
     })
 
-    
-
-    // render();
     requestAnimationFrame(gameLoop)
-
-    
   }
 
   if ("type" in e.data && typeof(e.data.type) === "string") {
@@ -53,7 +49,25 @@ onmessage = async (e) => {
         keyPressedMap.set(e.data.key, false)
       }
 
+      if (isIPCInitGPMessageObject(e.data)) {
+        
+        const state = gameState()!
 
+        const playerCar = new Car(e.data.carColor)
+
+        const aiCars = Object.values(CarImagePath).filter(path => path !== e.data.carColor).map(path => new Car(path))
+
+        state.playerCar = playerCar
+        state.cars = [playerCar, ...aiCars]
+        state.paused = false
+        setupGameState(state)
+      }
+
+      if (isIPCSetPauseStateMessageObject(e.data)) {
+        const state = gameState()!
+        state.paused = e.data.paused
+        setupGameState(state)
+      }
     }
 
     

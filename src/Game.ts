@@ -1,7 +1,15 @@
-import type { KeybindMap, KeyPressedMap } from "./keybind/Keyboard"
-import { makeDefaultKeybindMap, makeKeyPressedMap, setKeyListener } from "./keybind/Keyboard"
+import type { KeybindMap } from "./keybind/Keyboard"
+import { makeDefaultKeybindMap, setKeyListener } from "./keybind/Keyboard"
+import { setupChooseCarMenu } from "./menu/ChooseCarMenu"
+import { setupMainMenu } from "./menu/MainMenu"
+import { MenuCSSProperty, setMenuInvisible, setMenuVisible } from "./menu/MenuShared"
+import { setupPauseMenu } from "./menu/PauseMenu"
+import { IPCInitGPMessage, IPCSetPauseStateMessage } from "./multithreading/IPC"
+import { CarImagePath } from "./physics/Car"
 
-class Game {
+export class Game {
+
+	paused: boolean
 
 	/**
 	 * HTML canvas element that the game is drawn to.
@@ -18,6 +26,8 @@ class Game {
 	 */
 	worker: Worker
 
+	debugTextElement: HTMLSpanElement
+
 	/**
 	 * Maps the keybind names to the internal JavaScript names 
 	 * of the bound keys.
@@ -26,9 +36,12 @@ class Game {
 
 	constructor(gameCanvasId: string) {
 
+		this.paused = false
 		this.gameCanvas = _getGameCanvasHTMLElement(gameCanvasId)
 		this.gameCanvasContext = _getGameCanvas2DContext(this.gameCanvas)
 		this.gameCanvasContext.imageSmoothingEnabled = false
+
+		this.debugTextElement = document.getElementById("debugText") as HTMLSpanElement
 
 		this.keybindMap = makeDefaultKeybindMap()
 		
@@ -36,24 +49,44 @@ class Game {
 			type: "module"
 		})
 
-		setKeyListener(this.keybindMap, this.worker)
-		setKeyListener(this.keybindMap, this.worker)
+		setKeyListener(this.keybindMap, this.worker, this)
 
 		// Listen for rendered frames from the worker
 		this.worker.onmessage = (e) => {
-			const { bitmap } = e.data;
+			if (e.data.type === "render") {
+				const { bitmap } = e.data;
 
-			this.gameCanvasContext.save()
-			this.gameCanvasContext.scale(4, 4)
-			this.gameCanvasContext.drawImage(bitmap, 0, 0);
-			this.gameCanvasContext.restore()
+				this.gameCanvasContext.save()
+				this.gameCanvasContext.scale(4, 4)
+				this.gameCanvasContext.drawImage(bitmap, 0, 0);
+				this.gameCanvasContext.restore()
 
-			// Close the bitmap to free up GPU memory
-			bitmap.close();
+				// Close the bitmap to free up GPU memory
+				bitmap.close();
+			}
+
+			if (e.data.type === "debugText") {
+				this.debugTextElement.innerText = e.data.text
+			}
+			
 		};
 
 		this.worker.postMessage({ type: 'START', width: this.gameCanvas.width, height: this.gameCanvas.height });
 
+	}
+
+	initGP(color: CarImagePath) {
+		this.worker.postMessage({type: IPCInitGPMessage, carColor: color})
+	}
+
+	togglePause() {
+		this.paused = !this.paused;
+		if (this.paused) {
+			setMenuVisible(MenuCSSProperty.PAUSE, this)
+		} else {
+			setMenuInvisible(MenuCSSProperty.PAUSE)
+		}
+		this.worker.postMessage({type: IPCSetPauseStateMessage, paused: this.paused})
 	}
 
 }
@@ -87,4 +120,14 @@ function _getGameCanvas2DContext(canvas: HTMLCanvasElement): CanvasRenderingCont
 	return potentiallyNullCanvas
 }
 
-const game = new Game("gameCanvas")
+let _gameObject: Game | null = null;
+
+document.addEventListener("DOMContentLoaded", () => {
+	_gameObject = new Game("gameCanvas")
+
+	setupMainMenu(_gameObject)
+	setupChooseCarMenu(_gameObject)
+	setupPauseMenu(_gameObject)
+})
+
+export const gameObject = () => _gameObject

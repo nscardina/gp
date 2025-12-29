@@ -1,4 +1,5 @@
 import { isDebug } from "../Debug"
+import type { Game } from "../Game"
 import { makeIPCKeyDownEventObject, makeIPCKeyUpEventObject } from "../multithreading/IPC"
 import { IterAny } from "../util/IteratorUtils"
 
@@ -69,22 +70,38 @@ let oldKeyupListener: ((this: Window, ev: KeyboardEvent) => any) | null = null
  * @param keybindMap keybind map.
  * @param keyPressedMap map to set when the keys are pressed. 
  */
-export function setKeyListener(keybindMap: KeybindMap, gameWorker: Worker) {
+export function setKeyListener(keybindMap: KeybindMap, gameWorker: Worker, game: Game) {
+
+    let canPause: boolean = true
 
     const keydownListener: (this: Window, ev: KeyboardEvent) => any = event => {
-        if (IterAny(keybindMap.values(), value => value === event.key)) {
-            gameWorker.postMessage(makeIPCKeyDownEventObject(event.key))
-            if (isDebug()) {
-                console.log(`"${event.key}" pressed`)
+        if (event.key === "Escape") {
+            if (canPause) {
+                game.togglePause()
+                canPause = false
+            }
+        } else {
+            if (IterAny(keybindMap.values(), value => value === event.key)) {
+                gameWorker.postMessage(makeIPCKeyDownEventObject(event.key))
+                if (isDebug()) {
+                    console.log(`"${event.key}" pressed`)
+                }
             }
         }
+
+        
     } 
 
     const keyupListener: (this: Window, ev: KeyboardEvent) => any = event => {
-        if (IterAny(keybindMap.values(), value => value === event.key)) {
-            gameWorker.postMessage(makeIPCKeyUpEventObject(event.key))
-            if (isDebug()) {
-                console.log(`"${event.key}" released`)
+        if (event.key === "Escape") {
+            canPause = true
+        }
+        else {
+            if (IterAny(keybindMap.values(), value => value === event.key)) {
+                gameWorker.postMessage(makeIPCKeyUpEventObject(event.key))
+                if (isDebug()) {
+                    console.log(`"${event.key}" released`)
+                }
             }
         }
     }

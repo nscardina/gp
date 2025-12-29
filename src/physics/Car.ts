@@ -18,6 +18,13 @@ const HEAVY_OFFROAD_SPEED_MODIFIER = 0.2
 const HEAVY_TURNING_RADIUS_MODIFIER = 0.6
 const HEAVY_CAMERA_ANGLE_OFFSET = 0.1
 
+export enum CarImagePath {
+    RED = "/car/red_car.png",
+    GREEN = "/car/green_car.png",
+    BLUE = "/car/blue_car.png",
+    PURPLE = "/car/purple_car.png"
+}
+
 export default class Car extends PhysicsObject {
 
     #cameraAngle: number
@@ -28,12 +35,12 @@ export default class Car extends PhysicsObject {
 
     #image: ImageBitmap | null = null
 
-    constructor() {
+    constructor(color: CarImagePath) {
         super(new Circle(new Point(100, 100), 6), 0.5, 0.0015)
         this.#cameraAngle = this.angle
         this.#maxCameraAngleOffset = 0
         this.#cameraAngleVelocity = 0
-        loadImage('/red_kart.png').then(image => this.#image = image)
+        loadImage(color).then(image => this.#image = image)
     }
 
     get image(): ImageBitmap | null {
@@ -206,6 +213,10 @@ export default class Car extends PhysicsObject {
         return {
             shake: shake
         }
+    }
+
+    debugText(): string {
+        return `Car[x:${this.hitbox.getCenter().x.toFixed(0)} y:${this.hitbox.getCenter().y.toFixed(0)} v:${this.velocity.toFixed(2)} a:${this.angle.toFixed(2)}]`
     }
 
 }
