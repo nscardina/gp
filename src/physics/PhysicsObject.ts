@@ -1,5 +1,7 @@
+import Circle from "../geometry/Circle";
 import { DESIRED_MS_PER_TICK } from "../multithreading/GameLoop";
 import type HitboxShape from "./HitboxShape";
+import { physicsCollisionCircleWithCircle } from "./PhysicsCollision";
 
 export default class PhysicsObject {
 
@@ -19,10 +21,13 @@ export default class PhysicsObject {
 
     #minimumAngularVelocity: number
 
+    #mass: number
+
     constructor(
         hitbox: HitboxShape, 
         maximumVelocity: number, 
         maximumAngularVelocity: number,
+        mass: number,
         minimumVelocity?: number,
         minimumAngularVelocity?: number
     ) {
@@ -34,6 +39,7 @@ export default class PhysicsObject {
         this.#angularVelocity = 0
         this.#maximumAngularVelocity = maximumAngularVelocity
         this.#minimumAngularVelocity = minimumAngularVelocity ?? -maximumAngularVelocity
+        this.#mass = mass
     }
 
     get hitbox(): HitboxShape {
@@ -66,6 +72,14 @@ export default class PhysicsObject {
 
     set minimumVelocity(minimumVelocity: number) {
         this.#minimumVelocity = minimumVelocity
+    }
+
+    get mass(): number {
+        return this.#mass
+    }
+
+    set mass(mass: number) {
+        this.#mass = mass
     }
 
     get angle(): number {
@@ -107,6 +121,12 @@ export default class PhysicsObject {
             this.#velocity * Math.cos(this.#angle) * timeFactor,
             this.#velocity * Math.sin(this.#angle) * timeFactor
         )
+    }
+
+    collide(other: PhysicsObject) {
+        if (this.hitbox instanceof Circle && other.hitbox instanceof Circle) {
+            physicsCollisionCircleWithCircle(this, other)
+        }
     }
 
 }

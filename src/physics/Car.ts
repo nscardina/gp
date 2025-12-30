@@ -1,8 +1,10 @@
 import { setDebug } from "../Debug";
+import { normalizeNegativePositivePi } from "../geometry/Angles";
 import Circle from "../geometry/Circle";
 import Point from "../geometry/Point";
 import type { KeybindMap, KeyPressedMap } from "../keybind/Keyboard";
-import { CollisionEffect, type CollisionArea } from "../level/Collision";
+import { getNextAIPathMarker, type AIPathMarker } from "../level/AIPathMarker";
+import { CollisionArea, CollisionEffect } from "../level/Collision";
 import { loadImage } from "../util/LoadImage";
 import PhysicsObject from "./PhysicsObject";
 
@@ -35,11 +37,17 @@ export default class Car extends PhysicsObject {
 
     #image: ImageBitmap | null = null
 
-    constructor(color: CarImagePath) {
-        super(new Circle(new Point(100, 100), 6), 0.5, 0.0015)
+    #currentAIPathMarker: AIPathMarker | null
+
+    constructor(color: CarImagePath, xPos?: number, yPos?: number, angle?: number) {
+        super(new Circle(new Point(xPos ?? 0, yPos ?? 0), 6), 0.5, 0.0015, 5)
+        if (angle !== undefined) {
+            this.angle = angle
+        }
         this.#cameraAngle = this.angle
         this.#maxCameraAngleOffset = 0
         this.#cameraAngleVelocity = 0
+        this.#currentAIPathMarker = null
         loadImage(color).then(image => this.#image = image)
     }
 
@@ -85,11 +93,90 @@ export default class Car extends PhysicsObject {
         this.#maxCameraAngleOffset = maxCameraAngleOffset
     }
 
+    get currentAIPathMarker(): AIPathMarker | null {
+        return this.#currentAIPathMarker
+    }
+
+    set currentAIPathMarker(marker: AIPathMarker | null) {
+        this.#currentAIPathMarker = marker
+    }
+
+    aiCarUpdate(
+        deltaTime: number,
+        collision: CollisionArea[],
+        aiPathMarkers: AIPathMarker[],
+        physicsObjects: PhysicsObject[]
+    ) {
+
+        let maxSpeedModifier: number = 1.0
+        let turningRadiusModifier: number = 1.0
+
+        for (const collisionArea of this.#collisionsOccurring(collision)) {
+            maxSpeedModifier = calculateMaxSpeedModifier(maxSpeedModifier, collisionArea)
+            turningRadiusModifier = calculateTurningRadiusModifier(turningRadiusModifier, collisionArea)
+        }
+
+        for (const obj of physicsObjects.filter(o => o !== this && this.hitbox.collidesWith(o.hitbox))) {
+            this.collide(obj)
+        }
+
+        // drive forward
+        this.velocity += 0.005
+        
+
+        // TODO add code to determine the lap completion percentage from the checkpoints of the current ai path marker and
+        // if the ai car is further along in the lap completion than the marker is, then move to the next path marker as well 
+        // (in case it misses the path marker for some reason)
+        
+
+        if (this.#currentAIPathMarker !== null) {
+            // has car reached the path marker it's going to?
+            if (this.hitbox.collidesWith(this.#currentAIPathMarker.point)) {
+                // pick the next one to drive to
+                this.#currentAIPathMarker = getNextAIPathMarker(this.#currentAIPathMarker, aiPathMarkers)
+            }
+
+            const targetAngle = Math.atan2(
+                this.#currentAIPathMarker.point.y - this.hitbox.getCenter().y, 
+                this.#currentAIPathMarker.point.x - this.hitbox.getCenter().x
+            )
+
+            const difference = normalizeNegativePositivePi(targetAngle - this.angle)
+            if (difference > 0) {
+                this.angularVelocity += 0.00075 * turningRadiusModifier
+            } else {
+                this.angularVelocity -= 0.00075 * turningRadiusModifier
+            }
+        }
+        
+        if (
+            this.velocity > this.maximumVelocity * maxSpeedModifier
+            || this.velocity < this.minimumVelocity * maxSpeedModifier
+        ) {
+            this.velocity *= 0.95
+        }
+
+        if (
+            this.angularVelocity > this.maximumAngularVelocity * turningRadiusModifier
+            || this.angularVelocity < this.minimumAngularVelocity * turningRadiusModifier
+        ) {
+            this.angularVelocity *= 0.95
+        }
+
+        // update angle / camera angle
+        this.angle += this.angularVelocity * deltaTime
+        this.cameraAngle += this.angularVelocity * deltaTime
+
+        super.update(deltaTime)
+
+    }
+
     carUpdate(
         deltaTime: number,
         keybindMap: KeybindMap, 
         keyPressedMap: KeyPressedMap,
-        collision: CollisionArea[]
+        collision: CollisionArea[],
+        physicsObjects: PhysicsObject[]
     ) {
 
         let shake: boolean = false
@@ -98,35 +185,35 @@ export default class Car extends PhysicsObject {
         let maxCameraAngleOffset: number = 0.0
 
         // Track object interactions
-        for (const collisionArea of collision) {
-            if (this.hitbox.getCenter().collidesWith(collisionArea.shape)) {
-                switch (collisionArea.effect) {
-                    case CollisionEffect.LIGHT_OFFROAD:
-                        shake = true
-                        maxSpeedModifier = Math.min(maxSpeedModifier, LIGHT_OFFROAD_SPEED_MODIFIER)
-                        turningRadiusModifier = Math.min(turningRadiusModifier, LIGHT_TURNING_RADIUS_MODIFIER)
-                        maxCameraAngleOffset = Math.max(maxCameraAngleOffset, LIGHT_CAMERA_ANGLE_OFFSET)
-                        break
+        for (const collisionArea of this.#collisionsOccurring(collision)) {
+            maxSpeedModifier = calculateMaxSpeedModifier(maxSpeedModifier, collisionArea)
+            turningRadiusModifier = calculateTurningRadiusModifier(turningRadiusModifier, collisionArea)
 
-                    case CollisionEffect.MEDIUM_OFFROAD:
-                        shake = true
-                        maxSpeedModifier = Math.min(maxSpeedModifier, MEDIUM_OFFROAD_SPEED_MODIFIER)
-                        turningRadiusModifier = Math.min(turningRadiusModifier, MEDIUM_TURNING_RADIUS_MODIFIER)
-                        maxCameraAngleOffset = Math.max(maxCameraAngleOffset, MEDIUM_CAMERA_ANGLE_OFFSET)
-                        break
+            switch (collisionArea.effect) {
+                case CollisionEffect.LIGHT_OFFROAD:
+                    shake = true
+                    maxCameraAngleOffset = Math.max(maxCameraAngleOffset, LIGHT_CAMERA_ANGLE_OFFSET)
+                    break
 
-                    case CollisionEffect.HEAVY_OFFROAD:
-                        shake = true
-                        maxSpeedModifier = Math.min(maxSpeedModifier, HEAVY_OFFROAD_SPEED_MODIFIER)
-                        turningRadiusModifier = Math.min(turningRadiusModifier, HEAVY_TURNING_RADIUS_MODIFIER)
-                        maxCameraAngleOffset = Math.max(maxCameraAngleOffset, HEAVY_CAMERA_ANGLE_OFFSET)
-                        break
+                case CollisionEffect.MEDIUM_OFFROAD:
+                    shake = true
+                    maxCameraAngleOffset = Math.max(maxCameraAngleOffset, MEDIUM_CAMERA_ANGLE_OFFSET)
+                    break
 
-                    case CollisionEffect.CAMERA_SHAKE:
-                        shake = true
-                        break
-                }
+                case CollisionEffect.HEAVY_OFFROAD:
+                    shake = true
+                    maxCameraAngleOffset = Math.max(maxCameraAngleOffset, HEAVY_CAMERA_ANGLE_OFFSET)
+                    break
+
+                case CollisionEffect.CAMERA_SHAKE:
+                    shake = true
+                    break
             }
+            
+        }
+
+        for (const obj of physicsObjects.filter(o => o !== this && this.hitbox.collidesWith(o.hitbox))) {
+            this.collide(obj)
         }
         this.#maxCameraAngleOffset = maxCameraAngleOffset
 
@@ -215,8 +302,53 @@ export default class Car extends PhysicsObject {
         }
     }
 
-    debugText(): string {
-        return `Car[x:${this.hitbox.getCenter().x.toFixed(0)} y:${this.hitbox.getCenter().y.toFixed(0)} v:${this.velocity.toFixed(2)} a:${this.angle.toFixed(2)}]`
+    #collisionsOccurring(allAreas: CollisionArea[]): CollisionArea[] {
+        return allAreas.filter(area => this.hitbox.getCenter().collidesWith(area.shape))
     }
 
+    debugText(): string {
+        return `Car[x:${
+            this.hitbox.getCenter().x.toFixed(0)
+        } y:${
+            this.hitbox.getCenter().y.toFixed(0)
+        } v:${
+            this.velocity.toFixed(2)
+        } a:${
+            this.angle.toFixed(2)
+        }${
+            (this.#currentAIPathMarker === null) ? "" : " m: " + this.#currentAIPathMarker.number
+        }]`
+    }
+
+}
+
+const calculateMaxSpeedModifier = (currentModifier: number, collisionArea: CollisionArea): number => {
+    let newModifier = 1.0
+    switch (collisionArea.effect) {
+        case CollisionEffect.LIGHT_OFFROAD:
+            newModifier = LIGHT_OFFROAD_SPEED_MODIFIER
+            break
+        case CollisionEffect.MEDIUM_OFFROAD:
+            newModifier = MEDIUM_OFFROAD_SPEED_MODIFIER
+            break
+        case CollisionEffect.HEAVY_OFFROAD:
+            newModifier = HEAVY_OFFROAD_SPEED_MODIFIER
+            break
+    }
+    return Math.min(currentModifier, newModifier)
+}
+
+const calculateTurningRadiusModifier = (currentModifier: number, collisionArea: CollisionArea): number => {
+    let newModifier: number = 1.0
+    switch (collisionArea.effect) {
+        case CollisionEffect.LIGHT_OFFROAD:
+            newModifier = LIGHT_TURNING_RADIUS_MODIFIER
+            break
+        case CollisionEffect.MEDIUM_OFFROAD:
+            newModifier = MEDIUM_TURNING_RADIUS_MODIFIER
+            break
+        case CollisionEffect.HEAVY_OFFROAD:
+            newModifier = HEAVY_TURNING_RADIUS_MODIFIER
+    }
+    return Math.min(currentModifier, newModifier)
 }

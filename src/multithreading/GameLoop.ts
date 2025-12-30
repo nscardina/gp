@@ -28,9 +28,17 @@ function update(deltaTime: number): RenderInfo | null {
         return null
     }
 
-    const { course, playerCar, keybindMap, keyPressedMap } = state
+    const { course, playerCar, cars, keybindMap, keyPressedMap } = state
 
-    let playerCarUpdateResults = playerCar.carUpdate(deltaTime, keybindMap, keyPressedMap, course.collisionAreas)
+    for (const aiCar of cars.filter(car => car !== playerCar)) {
+        aiCar.aiCarUpdate(deltaTime, course.collisionAreas, course.aiPathMarkers, [
+            ...cars
+        ])
+    }
+
+    let playerCarUpdateResults = playerCar.carUpdate(deltaTime, keybindMap, keyPressedMap, course.collisionAreas, [
+        ...cars
+    ])
     return {
         ...playerCarUpdateResults
     }
@@ -49,7 +57,7 @@ function render(renderInfo: RenderInfo | null) {
     const x = (offscreenCanvas.width + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
     const y = (offscreenCanvas.height + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
 
-    course.render(ctx, x, y, playerCar)
+    course.render(ctx, x, y, playerCar, state.cars)
 
     const carImg = playerCar.image
     if (carImg !== null) {
@@ -76,10 +84,10 @@ function setDebugText() {
         return
     }
 
-    const { playerCar } = state
+    const { playerCar, cars } = state
 
     
-    postMessage({type: "debugText", text: playerCar.debugText()})
+    postMessage({type: "debugText", text: cars.map(car => car.debugText()).join("\n")})
 
     
 }

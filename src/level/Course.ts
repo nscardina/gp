@@ -3,27 +3,37 @@ import { loadImageFromZip } from "../util/LoadImage"
 import BackgroundSprite, { isBackgroundSpriteJSONData } from "./BackgroundSprite"
 import type Car from "../physics/Car"
 import { CollisionArea, getCollisionEffectDebugColor, isCollisionAreaJSONData } from "./Collision"
-import type HitboxShape from "../physics/HitboxShape"
 import Polygon from "../geometry/Polygon"
 import { colorToString, type Color } from "../geometry/Color"
 import { isDebug } from "../Debug"
+import { isSpawnpointJSONData, Spawnpoint } from "./Spawnpoint"
+import { AIPathMarker, getAIPathMarkerDebugColor, isAIPathMarkerJSONData } from "./AIPathMarker"
+import type Point from "../geometry/Point"
 
 export default class Course {
 
     #images: Map<string, ImageBitmap>
 
+    #aiPathMarkers: AIPathMarker[]
+
     #backgroundSprites: BackgroundSprite[]
 
     #collisionAreas: CollisionArea[]
 
+    #spawnpoints: Spawnpoint[]
+
     constructor(
         images: Map<string, ImageBitmap>,
         backgroundSprites: BackgroundSprite[],
-        collisionAreas: CollisionArea[]
+        collisionAreas: CollisionArea[],
+        spawnpoints: Spawnpoint[],
+        aiPathMarkers: AIPathMarker[]
     ) {
         this.#images = images
         this.#backgroundSprites = backgroundSprites
         this.#collisionAreas = collisionAreas
+        this.#spawnpoints = spawnpoints
+        this.#aiPathMarkers = aiPathMarkers
     }
 
     get images(): Map<string, ImageBitmap> {
@@ -48,6 +58,22 @@ export default class Course {
 
     set collisionAreas(collisionAreas: CollisionArea[]) {
         this.#collisionAreas = collisionAreas
+    }
+
+    get spawnpoints(): Spawnpoint[] {
+        return this.#spawnpoints
+    }
+
+    set spawnpoints(spawnpoints: Spawnpoint[]) {
+        this.spawnpoints = spawnpoints
+    }
+
+    get aiPathMarkers(): AIPathMarker[] {
+        return this.#aiPathMarkers
+    }
+
+    set aiPathMarkers(aiPathMarkers: AIPathMarker[]) {
+        this.#aiPathMarkers = aiPathMarkers
     }
 
 
@@ -106,10 +132,36 @@ export default class Course {
                 return CollisionArea.deserialize(c)
             })
 
+            if (
+                !("spawnpoints" in courseJson) 
+                || !Array.isArray(courseJson.spawnpoints)
+                || !courseJson.spawnpoints.every(s => isSpawnpointJSONData(s))
+            ) {
+                throw "Malformed course.json spawnpoints section"
+            }
+
+            const spawnpoints = courseJson.spawnpoints.map(s => {
+                return Spawnpoint.deserialize(s)
+            })
+
+            if (
+                !("aiPathMarkers" in courseJson)
+                || !Array.isArray(courseJson.aiPathMarkers)
+                || !courseJson.aiPathMarkers.every(m => isAIPathMarkerJSONData(m))
+            ) {
+                throw "Malformed course.json aiPathMarkers section"
+            }
+
+            const aiPathMarkers = courseJson.aiPathMarkers.map(m => {
+                return AIPathMarker.deserialize(m)
+            })
+
             const course = new Course(
                 imageMap,
                 backgroundSprites,
-                collisionAreas
+                collisionAreas,
+                spawnpoints,
+                aiPathMarkers
             )
             return course
 
@@ -123,10 +175,26 @@ export default class Course {
         ctx: OffscreenCanvasRenderingContext2D,
         offscreenWidth: number,
         offscreenHeight: number,
-        playerCar: Car
+        playerCar: Car,
+        allCars: Car[]
     ) {
         for (const sprite of this.#backgroundSprites) {
             this.renderSprite(ctx, offscreenWidth, offscreenHeight, playerCar, sprite)
+        }
+
+        if (isDebug()) {
+            for (const aiPathMarker of this.#aiPathMarkers) {
+                this.renderCircle(ctx, offscreenWidth, offscreenHeight, playerCar, aiPathMarker.point, 4, getAIPathMarkerDebugColor(aiPathMarker))
+            }
+        }
+        
+
+        for (const aiCar of allCars.filter(car => car !== playerCar)) {
+            if (aiCar.image !== null) {
+                this.renderImageBitmap(ctx, offscreenWidth, offscreenHeight, playerCar, aiCar.image, 
+                aiCar.hitbox.getCenter().x, aiCar.hitbox.getCenter().y, aiCar.angle)
+            }
+            
         }
 
         if (isDebug()) {
@@ -137,6 +205,29 @@ export default class Course {
             }
         }
         
+    }
+
+    renderImageBitmap(
+        ctx: OffscreenCanvasRenderingContext2D,
+        offscreenWidth: number,
+        offscreenHeight: number,
+        playerCar: Car,
+        img: ImageBitmap,
+        spriteX: number,
+        spriteY: number,
+        rotation: number
+    ) {
+
+        ctx.save();
+        ctx.translate(offscreenWidth / 2, offscreenHeight / 2)
+        ctx.rotate(-playerCar.angle - Math.PI / 2);
+        ctx.translate(-playerCar.hitbox.getCenter().x, -playerCar.hitbox.getCenter().y)
+        ctx.translate(spriteX, spriteY);
+        ctx.rotate(rotation + Math.PI / 2)
+
+        ctx.drawImage(img, ( - img.width / 2) | 0, ( - img.height / 2) | 0)
+ 
+        ctx.restore()
     }
 
     renderSprite(
@@ -203,6 +294,28 @@ export default class Course {
         
         ctx.fill()
         ctx.stroke()
+
+        ctx.restore()
+    }
+
+    renderCircle(
+        ctx: OffscreenCanvasRenderingContext2D,
+        offscreenWidth: number,
+        offscreenHeight: number,
+        playerCar: Car,
+        center: Point,
+        radius: number,
+        color: Color
+    ) {
+        ctx.save();
+        ctx.translate(offscreenWidth / 2, offscreenHeight / 2)
+        ctx.rotate(-playerCar.angle - Math.PI / 2);
+        ctx.translate(-playerCar.hitbox.getCenter().x, -playerCar.hitbox.getCenter().y)
+
+        ctx.beginPath()
+        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI)
+        ctx.fillStyle = colorToString(color)
+        ctx.fill()
 
         ctx.restore()
     }

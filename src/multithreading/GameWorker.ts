@@ -53,9 +53,20 @@ onmessage = async (e) => {
         
         const state = gameState()!
 
-        const playerCar = new Car(e.data.carColor)
-
-        const aiCars = Object.values(CarImagePath).filter(path => path !== e.data.carColor).map(path => new Car(path))
+        const playerCar = new Car(
+          e.data.carColor, 
+          state.course.spawnpoints.at(-1)?.location.x,
+          state.course.spawnpoints.at(-1)?.location.y,
+          state.course.spawnpoints.at(-1)?.spawnAngle
+        )
+        const aiCars = Object.values(CarImagePath)
+          .filter(path => path !== e.data.carColor)
+          .map((path, index) => {
+            const spawnpoint = state.course.spawnpoints.at(index)
+            const car = new Car(path, spawnpoint?.location.x, spawnpoint?.location.y, spawnpoint?.spawnAngle)
+            car.currentAIPathMarker = state.course.aiPathMarkers[1]
+            return car
+          })
 
         state.playerCar = playerCar
         state.cars = [playerCar, ...aiCars]
