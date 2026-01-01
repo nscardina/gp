@@ -1,12 +1,12 @@
-# *Nitro GP* - a retro racing game
+# *2D Grand Prix* - a retro racing game
 
-*Nitro GP* is a retro 2D racing videogame. Compete against 3 AI-controlled racers to place first overall in a set of four races. 
+*2D Grand Prix* is a retro 2D racing videogame. Compete against 3 AI-controlled racers to place first overall in a set of four races. 
 
-*Nitro GP* can be played in any web browser. A keyboard is required.
+*2D Grand Prix* can be played in any web browser. A keyboard is required.
 
 ## Development Progress
 
-*Nitro GP* is currently in development. Progress on its features is shown below:
+*2D Grand Prix* is currently in development. Progress on its features is shown below:
 
 - [x] Keyboard controls for player car
 - [x] AI controls for competitor cars
