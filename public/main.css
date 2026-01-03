@@ -24,6 +24,11 @@ h1 {
   }
 }
 
+@keyframes gp-respawn-fade-out {
+    0% { filter: grayscale(0%) }
+    100% { filter: grayscale(50%) brightness(50%) }
+}
+
 .gp-title {
     font-family: "press_start";
     color: rgb(0, 183, 255);
@@ -68,6 +73,8 @@ h1 {
     color: transparent;
     animation: gp-button-scroll-gradient 5s linear infinite;
 }
+
+
 
 #mainMenu {
     display: var(--mainMenuDisplay);
@@ -163,6 +170,7 @@ h1 {
 
 #debugText {
     position: absolute;
+    display: block;
     max-width: 100vw;
     top: 0;
     left: 0;
@@ -173,7 +181,7 @@ h1 {
     color: white;
     background-color: rgb(255 255 255 / 20%);
     backdrop-filter: blur(5px);
-    display: var(--gameCanvasDisplay);
+    /* display: var(--gameCanvasDisplay); */
 }
 
 #gameCanvasContainer {
@@ -183,6 +191,15 @@ h1 {
 #gameCanvas {
     width: 100%;
     height: 100%;
+    background-color: black;
+    font-smooth: never;
+    -webkit-font-smoothing: none;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges
+}
+
+#gameCanvas.gp-respawn-fadeout {
+    animation: gp-respawn-fade-out 1s forwards;
 }
 
 #pauseMenuContainer {

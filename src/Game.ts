@@ -4,7 +4,7 @@ import { setupChooseCarMenu } from "./menu/ChooseCarMenu"
 import { setupMainMenu } from "./menu/MainMenu"
 import { MenuCSSProperty, setMenuInvisible, setMenuVisible } from "./menu/MenuShared"
 import { setupPauseMenu } from "./menu/PauseMenu"
-import { IPCInitGPMessage, IPCSetPauseStateMessage } from "./multithreading/IPC"
+import { IPCInitGPMessage, IPCRespawnStartMessage, IPCSetPauseStateMessage } from "./multithreading/IPC"
 import { CarImagePath } from "./physics/Car"
 
 export class Game {
@@ -66,7 +66,12 @@ export class Game {
 			}
 
 			if (e.data.type === "debugText") {
-				this.debugTextElement.innerText = e.data.text
+				this.debugTextElement.innerHTML = e.data.text
+			}
+
+			if (e.data.type === IPCRespawnStartMessage) {
+				this.gameCanvas.classList.add("gp-respawn-fadeout")
+				setTimeout(() => this.gameCanvas.classList.remove("gp-respawn-fadeout"), 1000)
 			}
 			
 		};

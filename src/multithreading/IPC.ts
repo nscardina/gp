@@ -5,6 +5,18 @@ export const IPCKeyDownMessage = "KEY_DOWN"
 export const IPCKeyUpMessage = "KEY_UP"
 export const IPCInitGPMessage = "INIT_GP"
 export const IPCSetPauseStateMessage = "SET_PAUSE_STATE"
+export const IPCRespawnStartMessage = "RESPAWN_START"
+
+export type IPCRespawnStartMessageObject = {
+    type: typeof IPCRespawnStartMessage
+}
+
+export function isIPCRespawnStartMessage(object: unknown): object is IPCRespawnStartMessageObject {
+    return typeof(object) === "object"
+    && object !== null
+    && "type" in object
+    && object.type === IPCRespawnStartMessage
+}
 
 export type IPCKeyDownEventObject = {
     type: typeof IPCKeyDownMessage,

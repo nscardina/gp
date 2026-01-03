@@ -3,6 +3,8 @@ import type Course from "../level/Course"
 import type Car from "../physics/Car"
 
 export type GameState = {
+    state: "countdown" | "race" | "results_screen",
+    countdownNumber: "GO" | "1" | "2" | "3" | null,
     paused: boolean,
     offscreenCanvas: OffscreenCanvas,
     ctx: OffscreenCanvasRenderingContext2D,

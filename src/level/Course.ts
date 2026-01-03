@@ -9,8 +9,12 @@ import { isDebug } from "../Debug"
 import { isSpawnpointJSONData, Spawnpoint } from "./Spawnpoint"
 import { AIPathMarker, getAIPathMarkerDebugColor, isAIPathMarkerJSONData } from "./AIPathMarker"
 import type Point from "../geometry/Point"
+import Checkpoint from "./Checkpoint"
+import { isCheckpointJSONData } from "./Checkpoint"
 
 export default class Course {
+
+    #numberOfLaps: number
 
     #images: Map<string, ImageBitmap>
 
@@ -22,18 +26,32 @@ export default class Course {
 
     #spawnpoints: Spawnpoint[]
 
+    #checkpoints: Checkpoint[]
+
     constructor(
+        numberOfLaps: number,
         images: Map<string, ImageBitmap>,
         backgroundSprites: BackgroundSprite[],
         collisionAreas: CollisionArea[],
         spawnpoints: Spawnpoint[],
-        aiPathMarkers: AIPathMarker[]
+        aiPathMarkers: AIPathMarker[],
+        checkpoints: Checkpoint[]
     ) {
+        this.#numberOfLaps = numberOfLaps
         this.#images = images
         this.#backgroundSprites = backgroundSprites
         this.#collisionAreas = collisionAreas
         this.#spawnpoints = spawnpoints
         this.#aiPathMarkers = aiPathMarkers
+        this.#checkpoints = checkpoints
+    }
+
+    get numberOfLaps(): number {
+        return this.#numberOfLaps
+    }
+
+    set numberOfLaps(numberOfLaps: number) {
+        this.#numberOfLaps = numberOfLaps
     }
 
     get images(): Map<string, ImageBitmap> {
@@ -76,6 +94,14 @@ export default class Course {
         this.#aiPathMarkers = aiPathMarkers
     }
 
+    get checkpoints(): Checkpoint[] {
+        return this.#checkpoints
+    }
+
+    set checkpoints(checkpoints: Checkpoint[]) {
+        this.#checkpoints = checkpoints
+    }
+
 
     static async loadCourse(path: string): Promise<Course> {
         try {
@@ -93,6 +119,15 @@ export default class Course {
             if (!(typeof(courseJson) === "object") || courseJson === null) {
                 throw "Malformed course.json in zip"
             }
+
+            if (
+                !("numberOfLaps" in courseJson)
+                || !(typeof(courseJson.numberOfLaps) === "number")
+            ) {
+                throw "Malformed course.json: no numberOfLaps"
+            }
+
+            const numberOfLaps = courseJson.numberOfLaps
 
             if (
                 !("images" in courseJson) 
@@ -156,12 +191,26 @@ export default class Course {
                 return AIPathMarker.deserialize(m)
             })
 
+            if (
+                !("checkpoints" in courseJson)
+                || !Array.isArray(courseJson.checkpoints)
+                || !courseJson.checkpoints.every(c => isCheckpointJSONData(c))
+            ) {
+                throw "Malformed course.json checkpoints section"
+            }
+
+            const checkpoints = courseJson.checkpoints.map(c => {
+                return Checkpoint.deserialize(c)
+            })
+
             const course = new Course(
+                numberOfLaps,
                 imageMap,
                 backgroundSprites,
                 collisionAreas,
                 spawnpoints,
-                aiPathMarkers
+                aiPathMarkers,
+                checkpoints
             )
             return course
 
@@ -185,6 +234,16 @@ export default class Course {
         if (isDebug()) {
             for (const aiPathMarker of this.#aiPathMarkers) {
                 this.renderCircle(ctx, offscreenWidth, offscreenHeight, playerCar, aiPathMarker.point, 4, getAIPathMarkerDebugColor(aiPathMarker))
+            }
+
+            for (const checkpoint of this.#checkpoints) {
+                if (checkpoint.hitbox instanceof Polygon) {
+                    this.renderPolygon(
+                        ctx, offscreenWidth, offscreenHeight,
+                        playerCar, checkpoint.hitbox, 
+                        {red: 255, green: 0, blue: 255, alpha: 1.0}
+                    )
+                }
             }
         }
         

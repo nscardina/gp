@@ -1,4 +1,5 @@
 {
+    "numberOfLaps": 3,
     "images": {
         "circuit_bg_image": "img/circuit.png",
         "water0": "img/water0.png",
@@ -673,6 +674,106 @@
       "point": { "x": 90, "y": 240 },
       "number": 17,
       "lockedPath": null
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": 0,
+      "respawnPoint": { "x": 90, "y": 218 },
+      "respawnAngle": 4.712,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 0, "y": 180 },
+          { "x": 0, "y": 192 },
+          { "x": 201, "y": 192 },
+          { "x": 201, "y": 180 }
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "respawnPoint": { "x": 250, "y": 110 },
+      "respawnAngle": 0,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 250, "y": 0 },
+          { "x": 250, "y": 200 },
+          { "x": 262, "y": 200 },
+          { "x": 262, "y": 0 }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "respawnPoint": { "x": 330, "y": 230 },
+      "respawnAngle": 0.785,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 290, "y": 230 },
+          { "x": 290, "y": 242 },
+          { "x": 370, "y": 242 },
+          { "x": 370, "y": 230 }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "respawnPoint": { "x": 330, "y": 230 },
+      "respawnAngle": 0.785,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 410, "y": 0 },
+          { "x": 410, "y": 230 },
+          { "x": 422, "y": 230 },
+          { "x": 422, "y": 0 }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "respawnPoint": { "x": 530, "y": 375 },
+      "respawnAngle": 1.571,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 410, "y": 375 },
+          { "x": 410, "y": 387 },
+          { "x": 640, "y": 387 },
+          { "x": 640, "y": 375 }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "respawnPoint": { "x": 300, "y": 550 },
+      "respawnAngle": 3.142,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 300, "y": 500 },
+          { "x": 300, "y": 640 },
+          { "x": 312, "y": 640 },
+          { "x": 312, "y": 500 }
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "respawnPoint": { "x": 70, "y": 350 },
+      "respawnAngle": 4.712,
+      "hitbox": {
+        "type": "polygon",
+        "points": [
+          { "x": 0, "y": 350 },
+          { "x": 0, "y": 362 },
+          { "x": 160, "y": 362 },
+          { "x": 160, "y": 350 }
+        ]
+      }
     }
   ]
 }

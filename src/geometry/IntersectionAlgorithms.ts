@@ -1,9 +1,17 @@
 import type Circle from "./Circle";
 import Point from "./Point";
 import type Polygon from "./Polygon";
+import type Rectangle from "./Rectangle";
 
 export function PointInsideCircle(point: Point, circle: Circle): boolean {
     return point.distTo(circle.center) <= circle.radius
+}
+
+export function PointInsideRectangle(point: Point, rectangle: Rectangle): boolean {
+    return point.x >= rectangle.x
+    && point.x <= rectangle.x + rectangle.width
+    && point.y >= rectangle.y
+    && point.y <= rectangle.y + rectangle.height
 }
 
 export function CirclesIntersect(c1: Circle, c2: Circle): boolean {
@@ -43,15 +51,51 @@ export function PointInsidePolygon(point: Point, polygon: Polygon): boolean {
         point1 = points[i];
         point2 = points[(i + 1) % points.length] // wrap around to 0 if it's the last point
 
-
-        if (
-            point.y >= Math.min(point1.y, point2.y)
-            && point.y <= Math.max(point1.y, point2.y)
-            && (point1.x + (point.y - point1.y) * (point2.x - point1.x) / (point2.y - point1.y) > point.x)
-        ) {
-            intersectionCount++
+        if (point1.y > point.y != point2.y > point.y) {
+            const intersectX = (point.y - point1.y) * (point2.x - point1.x) / (point2.y - point1.y) + point1.x
+            if (intersectX > point.x) {
+                intersectionCount++
+            }
         }
     }
     // odd number of intersections
     return intersectionCount % 2 == 1
+}
+
+export function PointDistanceToLineSegment(point: Point, point1: Point, point2: Point): number {
+    const t = (
+        (point.x - point1.x) * (point2.x - point1.x) + 
+        (point.y - point1.y) * (point2.y - point1.y)
+    ) / (
+        Math.pow(point2.x - point1.x, 2)
+        + Math.pow(point2.y - point1.y, 2)
+    )
+
+    if (t < 0) {
+        return point.distTo(point1)
+    }
+    if (t > 1) {
+        return point.distTo(point2)
+    }
+
+    const A = point1.y - point2.y
+    const B = point2.x - point1.x
+    return Math.abs(
+        A * point.x + B * point.y + point1.x * point2.y - point2.x * point1.y
+    ) / Math.sqrt(
+        A * A + B * B
+    )
+}
+
+export function PointDistanceToPolygon(point: Point, polygon: Polygon) {
+    let minDist = Infinity
+    for (let i = 0; i < polygon.points.length; i++) {
+        const p1 = polygon.points[i]
+        const p2 = polygon.points[(i + 1) % polygon.points.length]
+        const dist = PointDistanceToLineSegment(point, p1, p2)
+        if (dist < minDist) {
+            minDist = dist
+        }
+    }
+    return minDist
 }
