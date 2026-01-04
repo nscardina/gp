@@ -1,22 +1,34 @@
+import type { ImageResources } from "../ImageResources"
+import type { CourseState } from "../multithreading/CourseState"
 import FadingUIRenderTask from "../multithreading/FadingUIRenderTask"
-import { gameState, type GameState } from "../multithreading/GameState"
+import type { GlobalState } from "../multithreading/GlobalState"
 
 export const makeCountdownFadingUIRenderTask = (
-    text: GameState["countdownNumber"],
-    state: GameState
+    text: CourseState["countdownNumber"],
+    globalState: GlobalState
 ) => {
     const task = new FadingUIRenderTask(1000, pct => {
-        const { offscreenCanvas, ctx } = state
-        ctx.font = "8px press_start"
-        ctx.textBaseline = "top"
-        ctx.imageSmoothingEnabled = false
-        ctx.fillStyle = `rgba(0, 153, 255, ${1 - pct})`
+        const { offscreenCanvas, ctx, imageResources } = globalState
 
-        ctx.fillRect(offscreenCanvas.width / 2 - 10, offscreenCanvas.height / 2, 20, 24)
-
-        ctx.textAlign = "center"
-        ctx.fillText(text!, offscreenCanvas.width / 2, offscreenCanvas.height / 2)
-        ctx.textAlign = "left"
+        const image = getCountdownImage(text, imageResources)
+        if (image !== null) {
+            ctx.globalAlpha = 1 - pct
+            ctx.drawImage(image, 
+                (offscreenCanvas.width / 2 - image.width / 2) | 0,
+                (offscreenCanvas.height / 2 - image.height / 2) | 0
+            )
+            ctx.globalAlpha = 1
+        }
     })
     return task
+}
+
+export const getCountdownImage = (text: CourseState["countdownNumber"], imageResources: ImageResources): ImageBitmap | null => {
+    switch (text) {
+        case "1": return imageResources.Countdown.One
+        case "2": return imageResources.Countdown.Two
+        case "3": return imageResources.Countdown.Three
+        case "GO": return imageResources.Countdown.Go
+        default: return null
+    }
 }

@@ -1,5 +1,5 @@
 #!/bin/sh
 TARGET_DIR="./course/$1"
-OUTPUT_ZIP="$(pwd)/public/$1.gpc"
+OUTPUT_ZIP="$(pwd)/public/course/$1.gpc"
 
 (cd "$TARGET_DIR" && zip -r "$OUTPUT_ZIP" .)

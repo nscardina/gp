@@ -18,3 +18,7 @@ export async function loadImageFromZip(zip: JSZip, path: string): Promise<ImageB
   }
   return createImageBitmap(await file.async("blob"))
 }
+
+export const loadText = async(url: string): Promise<string> => {
+  return (await fetch(url)).text()
+}

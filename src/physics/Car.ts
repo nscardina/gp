@@ -7,7 +7,7 @@ import { getNextAIPathMarker, type AIPathMarker } from "../level/AIPathMarker";
 import type Checkpoint from "../level/Checkpoint";
 import { CollisionArea, CollisionEffect } from "../level/Collision";
 import { IPCRespawnStartMessage } from "../multithreading/IPC";
-import { loadImage } from "../util/LoadImage";
+import { loadImage } from "../util/Load";
 import { getBlueCarStats, getGreenCarStats, getPurpleCarStats, getRedCarStats, type CarStats } from "./CarStats";
 import PhysicsObject from "./PhysicsObject";
 

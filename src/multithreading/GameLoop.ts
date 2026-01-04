@@ -1,12 +1,16 @@
 import { isDebug, setDebug } from "../Debug"
 import { PointDistanceToPolygon } from "../geometry/IntersectionAlgorithms"
 import type Polygon from "../geometry/Polygon"
+import { renderLapCounter } from "../gui/LapCounter"
+import { renderResultsScreen } from "../gui/ResultsScreen"
+import { renderSpeedometer } from "../gui/Speedometer"
 import { makeCountdownFadingUIRenderTask } from "../menu/Countdown"
-import type Car from "../physics/Car"
 import { Delay } from "../util/Delay"
+import type { CourseState } from "./CourseState"
 import FadingUIRenderTask from "./FadingUIRenderTask"
 import { FPSCounter } from "./FPSCounter"
-import { gameState, type GameState } from "./GameState"
+import type { GlobalState } from "./GlobalState"
+import type { GrandPrixState } from "./GrandPrixState"
 
 export const DESIRED_FPS = 120
 export const DESIRED_MS_PER_TICK = 1000 / DESIRED_FPS
@@ -21,51 +25,65 @@ type RenderInfo = {
 
 let fadingUIRenderTasks: FadingUIRenderTask[] = []
 
-export const gameLoop: FrameRequestCallback = (timestamp: number) => {
-    const deltaTime = timestamp - lastTime
-    lastTime = timestamp
+export const makeGameLoop = (
+    globalState: GlobalState, 
+    gpState: GrandPrixState,
+    courseState: CourseState
+): FrameRequestCallback => {
 
-    fpsCounter.updateFps(deltaTime)
+    const gameLoop: FrameRequestCallback = (timestamp: number) => {
+        const deltaTime = timestamp - lastTime
+        lastTime = timestamp
 
-    const renderInfo = update(deltaTime)
+        fpsCounter.updateFps(deltaTime)
 
-    render(renderInfo)
+        const renderInfo = update(deltaTime, globalState, gpState, courseState)
 
-    requestAnimationFrame(gameLoop)
+        render(renderInfo, globalState, gpState, courseState)
+
+        requestAnimationFrame(gameLoop)
+    }
+
+    return gameLoop
+
 }
 
 
-export const countdown = async(state: GameState) => {
-    state.state = "countdown"
+export const countdown = async(globalState: GlobalState, state: CourseState) => {
+    state.phase = "countdown"
     state.countdownNumber = "3"
-    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("3", state))
+    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("3", globalState))
 
     await Delay(1000)
     state.countdownNumber = "2"
-    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("2", state))
+    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("2", globalState))
 
     await Delay(1000)
     state.countdownNumber = "1"
-    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("1", state))
+    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("1", globalState))
 
     await Delay(1000)
     state.countdownNumber = "GO"
-    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("GO", state))
+    fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("GO", globalState))
 
-    state.state = "race"
+    state.phase = "race"
     await Delay(1000)
     state.countdownNumber = null
 }
 
-function update(deltaTime: number): RenderInfo | null {
-    const state = gameState()
+function update(
+    deltaTime: number,
+    globalState: GlobalState, 
+    gpState: GrandPrixState,
+    courseState: CourseState
+): RenderInfo | null {
 
-    if (state === null || state.paused) {
+    if (courseState.paused) {
         return null
     }
 
-    const debugOn = state.keyPressedMap.get(state.keybindMap.get("DEBUG_ACTIVATE")!)
-    const debugOff = state.keyPressedMap.get(state.keybindMap.get("DEBUG_DEACTIVATE")!)
+    const debugOn = globalState.keyPressedMap.get(globalState.keybindMap.get("DEBUG_ACTIVATE")!)
+    const debugOff = globalState.keyPressedMap.get(globalState.keybindMap.get("DEBUG_DEACTIVATE")!)
 
     if (debugOn) {
         setDebug(true)
@@ -74,9 +92,10 @@ function update(deltaTime: number): RenderInfo | null {
         setDebug(false)
     }
 
-    const { course, playerCar, cars, keybindMap, keyPressedMap } = state
+    const { course, playerCar, cars } = courseState
+    const { keybindMap, keyPressedMap } = globalState
 
-    if (state.state === "race") {
+    if (courseState.phase === "race") {
         for (const aiCar of cars.filter(car => car !== playerCar)) {
             aiCar.aiCarUpdate(deltaTime, course.collisionAreas, course.aiPathMarkers, [
                 ...cars
@@ -118,7 +137,7 @@ function update(deltaTime: number): RenderInfo | null {
             playerCar.currentLapNumber > course.numberOfLaps ||
             cars.filter(car => car.currentLapNumber > course.numberOfLaps).length >= 3
         ) {
-            state.state = "results_screen"
+            courseState.phase = "results_screen"
         }
 
         return {
@@ -126,7 +145,7 @@ function update(deltaTime: number): RenderInfo | null {
         }
     }
 
-    if (state.state === "results_screen") {
+    if (courseState.phase === "results_screen") {
         for (const car of cars) {
             car.aiCarUpdate(deltaTime, course.collisionAreas, course.aiPathMarkers, cars, course.checkpoints)
         }
@@ -138,92 +157,53 @@ function update(deltaTime: number): RenderInfo | null {
     
 }
 
-function render(renderInfo: RenderInfo | null) {
-    const state = gameState()
+function render(
+    renderInfo: RenderInfo | null,
+    globalState: GlobalState, 
+    gpState: GrandPrixState,
+    courseState: CourseState
+) {
 
-    if (state === null) {
-        return
-    }
-
-    const { offscreenCanvas } = state
+    const { offscreenCanvas } = globalState
 
     // draw background
-    renderCourse(renderInfo, state)
+    renderCourse(renderInfo, globalState, courseState)
 
-    renderCarImage(state)
+    renderCarImage(globalState, courseState)
 
-    if (state.state === "countdown" || state.state === "race") {
-        renderLapCounter(state)
-        renderSpeedometer(state)
+    if (courseState.phase === "countdown" || courseState.phase === "race") {
+        renderLapCounter(globalState, courseState)
+        renderSpeedometer(globalState, courseState)
     }
-    
 
-    // if (state.state === "countdown" && state.countdownNumber !== null) {
-    //     renderCenteredText(state, state.countdownNumber)
-    // }
     fadingUIRenderTasks = fadingUIRenderTasks.filter(t => !t.isCompleted)
     for (const task of fadingUIRenderTasks) {
         task.render()
     }
 
-    if (state.state === "results_screen") {
-        renderResultsScreen(state)
+    if (courseState.phase === "results_screen") {
+        renderResultsScreen(globalState, courseState)
     }
 
-    setDebugText()
+    setDebugText(courseState)
 
     const bitmap = offscreenCanvas.transferToImageBitmap();
     postMessage({ type: "render", bitmap: bitmap }, [bitmap] as any)
 }
 
-function renderResultsScreen(state: GameState) {
-    const textLines = ["Results"]
-    textLines.push(...state.cars.map(car => `${car.name}: ${car.currentPlace}`))
-
-    const { offscreenCanvas, ctx } = state
-    ctx.font = "8px press_start"
-    ctx.textBaseline = "top"
-    ctx.imageSmoothingEnabled = false
-    
-
-    const dotMetrics = ctx.measureText(". ")
-
-    ctx.fillStyle = "rgb(0 0 0 / 80%)"
-    ctx.fillRect(5, 5, offscreenCanvas.width - 10, 25 + (dotMetrics.actualBoundingBoxAscent + dotMetrics.actualBoundingBoxDescent + 5) * textLines.length)
-
-    ctx.textAlign = "center"
-    ctx.fillStyle = "rgba(0, 153, 255, 1)"
-    ctx.fillText("Results", offscreenCanvas.width / 2, 10)
-    
-
-    // draw car placement text
-    state.cars.forEach((car, index) => {
-        const carNameMetrics = ctx.measureText(car.name)
-        const carPlaceMetrics = ctx.measureText(`${car.currentPlace}`)
-
-        const numDots = Math.floor((offscreenCanvas.width - carNameMetrics.width - carPlaceMetrics.width - 20) / dotMetrics.width)
-
-        ctx.textAlign = "left"
-        ctx.fillText(`${car.name}`, 10, 20 + 10 * index)
-        ctx.textAlign = "right"
-        ctx.fillText(`${". ".repeat(numDots)}${car.currentPlace}`, offscreenCanvas.width - 10, 20 + 10 * index)
-    })
-
-    ctx.textAlign = "left"
-    
-}
-
-function renderCourse(renderInfo: RenderInfo | null, state: GameState) {
-    const { offscreenCanvas, course, ctx, playerCar } = state
+function renderCourse(renderInfo: RenderInfo | null, globalState: GlobalState, courseState: CourseState) {
+    const { offscreenCanvas, ctx } = globalState
+    const { playerCar, course, cars } = courseState
     
     const x = (offscreenCanvas.width + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
     const y = (offscreenCanvas.height + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
 
-    course.render(ctx, x, y, playerCar, state.cars)
+    course.render(ctx, x, y, playerCar, cars)
 }
 
-function renderCarImage(state: GameState) {
-    const { playerCar, ctx, offscreenCanvas } = state
+function renderCarImage(globalState: GlobalState, courseState: CourseState) {
+    const { ctx, offscreenCanvas } = globalState
+    const { playerCar } = courseState
 
     // Player car image may not have loaded yet; don't render if it didn't
     const carImg = playerCar.image
@@ -238,70 +218,8 @@ function renderCarImage(state: GameState) {
     }
 }
 
-function renderSpeedometer(state: GameState) {
-    const { ctx, offscreenCanvas, playerCar } = state
-
-    const radius = 14
-    const cx = 15
-    const cy = offscreenCanvas.height - 10
-
-    // cos, sin of rotation 1/4pi - Math.cos(45 deg)
-    const tpi4 = Math.cos(Math.PI / 4)
-
-    // draw background of speedometer
-    ctx.beginPath()
-    ctx.arc(cx, cy, radius, 0, 2 * Math.PI, false)
-    ctx.fillStyle = "rgb(50, 50, 50)"
-    ctx.strokeStyle = "rgb(100, 100, 100)"
-    ctx.fill()
-    ctx.stroke()
-
-    // draw gray lines on speedometer
-    ctx.beginPath()
-    ctx.moveTo(cx - radius * tpi4, cy + radius * tpi4)
-    ctx.lineTo(cx - radius * tpi4 + 3, cy + radius * tpi4 - 3)
-    ctx.moveTo(cx - radius, cy)
-    ctx.lineTo(cx - radius + 3, cy)
-    ctx.moveTo(cx - radius * tpi4, cy - radius * tpi4)
-    ctx.lineTo(cx - radius * tpi4 + 3, cy - radius * tpi4 + 3)
-    ctx.moveTo(cx, cy - radius)
-    ctx.lineTo(cx, cy - radius + 3)
-    ctx.moveTo(cx + radius * tpi4, cy - radius * tpi4)
-    ctx.lineTo(cx + radius * tpi4 - 3, cy - radius * tpi4 + 3)
-    ctx.moveTo(cx + radius, cy)
-    ctx.lineTo(cx + radius - 3, cy)
-    ctx.moveTo(cx + radius * tpi4, cy + radius * tpi4)
-    ctx.lineTo(cx + radius * tpi4 - 3, cy + radius * tpi4 - 3)
-    ctx.stroke()
-    
-    // draw needle on speedometer
-    ctx.beginPath()
-    ctx.moveTo(15, offscreenCanvas.height - 10)
-    const speedometerAngle = -3 * Math.PI / 4 - (playerCar.velocity / 0.8) * 6 * Math.PI / 4
-    ctx.lineTo(
-        15 + (12 * Math.cos(speedometerAngle)),
-        offscreenCanvas.height - 10 - (12 * Math.sin(speedometerAngle))
-    )
-    ctx.strokeStyle = "rgb(255, 0, 0)"
-    ctx.stroke()
-}
-
-function renderLapCounter(state: GameState) {
-    const { playerCar, ctx, offscreenCanvas } = state
-
-    ctx.fillStyle = "rgb(50,50,50)"
-    ctx.roundRect(offscreenCanvas.width - 51, offscreenCanvas.height - 18, 50, 16, 4)
-    ctx.fill()
-
-    ctx.font = "8px press_start"
-    ctx.textBaseline = "top"
-    ctx.imageSmoothingEnabled = false
-    ctx.fillStyle = "rgba(0, 153, 255, 1)"
-    ctx.fillText(`Lap ${playerCar.currentLapNumber}`, offscreenCanvas.width - 46, offscreenCanvas.height - 13)
-}
-
-function renderCenteredText(state: GameState, text: string) {
-    const { offscreenCanvas, ctx } = state
+function renderCenteredText(globalState: GlobalState, text: string) {
+    const { offscreenCanvas, ctx } = globalState
     ctx.font = "8px press_start"
     ctx.textBaseline = "top"
     ctx.imageSmoothingEnabled = false
@@ -312,15 +230,14 @@ function renderCenteredText(state: GameState, text: string) {
     ctx.textAlign = "left"
 }
 
-function setDebugText() {
-    const state = gameState()
+function setDebugText(courseState: CourseState) {
 
-    if (state === null || !isDebug()) {
+    if (!isDebug()) {
         postMessage({type: "debugText", text: ""})
         return
     }
 
-    const { playerCar, cars } = state
+    const { playerCar, cars } = courseState
 
     let textLines = []
     textLines.push(fpsCounter.debugText())

@@ -1,5 +1,5 @@
 import JSZip from "jszip"
-import { loadImageFromZip } from "../util/LoadImage"
+import { loadImageFromZip } from "../util/Load"
 import BackgroundSprite, { isBackgroundSpriteJSONData } from "./BackgroundSprite"
 import type Car from "../physics/Car"
 import { CollisionArea, getCollisionEffectDebugColor, isCollisionAreaJSONData } from "./Collision"
