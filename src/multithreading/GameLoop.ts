@@ -51,6 +51,9 @@ export const makeGameLoop = (
 
 export const countdown = async(globalState: GlobalState, state: CourseState) => {
     state.phase = "countdown"
+
+    await Delay(1500)
+
     state.countdownNumber = "3"
     fadingUIRenderTasks.push(makeCountdownFadingUIRenderTask("3", globalState))
 

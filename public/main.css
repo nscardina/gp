@@ -82,12 +82,14 @@ h1 {
     padding: 1rem;
     width: 100%;
     height: 100%;
+    background-color: black;
 
     
 
     .logo-container {
         display: flex;
         flex-direction: column;
+        align-items: center;
         width: 100%;
         position: relative;
 
@@ -131,8 +133,19 @@ h1 {
         }
 
         .waving-flag {
-            image-rendering: pixelated;
-            filter: blur(5px);
+            max-height: 60vh;
+            aspect-ratio: 16/9;
+            /* width: min-content; */
+            object-fit: contain;
+            pointer-events: none;
+            /* mix-blend-mode: screen; */
+
+            /* background: transparent !important;
+  border: none !important;
+  outline: none !important; */
+  /* Prevents a faint gray line sometimes seen in Chrome */
+  /* mask-image: radial-gradient(white, black); */
+  /* -webkit-mask-image: -webkit-radial-gradient(white, black); */
         }
     }
 
