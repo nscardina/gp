@@ -11,10 +11,10 @@ export type ImageResources = {
 
 export const LoadImageResources = async(): Promise<ImageResources> => {
     const Countdown = {
-        One: loadImage("/countdown/countdown_1.png"),
-        Two: loadImage("/countdown/countdown_2.png"),
-        Three: loadImage("/countdown/countdown_3.png"),
-        Go: loadImage("/countdown/countdown_go.png")
+        One: loadImage(`countdown/countdown_1.png`),
+        Two: loadImage(`countdown/countdown_2.png`),
+        Three: loadImage(`countdown/countdown_3.png`),
+        Go: loadImage(`countdown/countdown_go.png`)
     }
 
     await Promise.allSettled([...Object.values(Countdown)])

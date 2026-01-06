@@ -1,6 +1,6 @@
 {
     "name": "Bronze Cup",
     "courses": [
-        "/course/circuit.gpc"
+        "course/circuit.gpc"
     ]
 }

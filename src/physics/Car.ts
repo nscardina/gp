@@ -41,10 +41,10 @@ const CAR_ANG_ACCEL_PER_SEC = 0.135
 
 
 export enum CarImagePath {
-    RED = "/car/red_car.png",
-    GREEN = "/car/green_car.png",
-    BLUE = "/car/blue_car.png",
-    PURPLE = "/car/purple_car.png"
+    RED = "car/red_car.png",
+    GREEN = "car/green_car.png",
+    BLUE = "car/blue_car.png",
+    PURPLE = "car/purple_car.png"
 }
 
 export default class Car extends PhysicsObject {

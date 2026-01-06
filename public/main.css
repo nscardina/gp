@@ -1,3 +1,4 @@
+/* Used to control which screens of the app are visible or not. */
 :root {
     --mainMenuDisplay: flex;
     --chooseCarMenuDisplay: none;
@@ -175,6 +176,7 @@ h1 {
 
         .waving-flag {
             max-height: 60vh;
+            max-width: 100%;
             aspect-ratio: 16/9;
             /* width: min-content; */
             object-fit: contain;
@@ -367,7 +369,7 @@ h1 {
 
 @font-face {
     font-family: "press_start";
-    src: url("/Press_Start_2P/PressStart2P-Regular.ttf");
+    src: url("./Press_Start_2P/PressStart2P-Regular.ttf");
     font-weight: normal;
     font-style: normal;
 }

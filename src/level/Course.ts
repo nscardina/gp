@@ -105,7 +105,7 @@ export default class Course {
 
     static async loadCourse(path: string): Promise<Course> {
         try {
-            const response = await fetch(path)
+            const response = await fetch(`${import.meta.env.BASE_URL}${path}`)
             const data = await response.arrayBuffer()
             const zip = new JSZip()
             const contents = await zip.loadAsync(data)

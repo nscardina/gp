@@ -6,19 +6,37 @@ import type JSZip from "jszip";
  * @returns ImageBitmap.
  */
 export async function loadImage(url: string): Promise<ImageBitmap> {
-  const response = await fetch(url);
-  const blob = await response.blob();
-  return createImageBitmap(blob);
+  try {
+    const response = await fetch(`${import.meta.env.BASE_URL}${url}`);
+    const blob = await response.blob();
+    return createImageBitmap(blob);
+  } catch (exception) {
+    console.error(exception)
+    throw exception
+  }
+  
 }
 
 export async function loadImageFromZip(zip: JSZip, path: string): Promise<ImageBitmap> {
-  const file = zip.file(path)
-  if (file === null) {
-    throw new Error(`file "${path}" not found in zip`)
+  try {
+    const file = zip.file(path)
+    if (file === null) {
+      throw new Error(`file "${path}" not found in zip`)
+    }
+    return createImageBitmap(await file.async("blob"))
+  } 
+  catch (exception) {
+    console.error(exception)
+    throw exception
   }
-  return createImageBitmap(await file.async("blob"))
+  
 }
 
 export const loadText = async(url: string): Promise<string> => {
-  return (await fetch(url)).text()
+  try {
+    return (await fetch(`${import.meta.env.BASE_URL}${url}`)).text()
+  } catch (exception) {
+    console.error(exception)
+    throw exception
+  }
 }
