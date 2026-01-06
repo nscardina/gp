@@ -6,7 +6,7 @@ import { displayGPResults } from "./menu/GPResultsScreen"
 import { setupMainMenu } from "./menu/MainMenu"
 import { MenuCSSProperty, setMenuInvisible, setMenuVisible } from "./menu/MenuShared"
 import { setupPauseMenu } from "./menu/PauseMenu"
-import { IPCDisplayNextRaceButton, IPCInitGPMessage, IPCRespawnStartMessage, IPCSetPauseStateMessage, IPCShowGPResults, isIPCDisplayGPResultsObject } from "./multithreading/IPC"
+import { IPCDisplayNextRaceButton, IPCInitGPMessage, IPCRespawnStartMessage, IPCSetPauseStateMessage, isIPCDisplayGPResultsObject } from "./multithreading/IPC"
 import { CarImagePath } from "./physics/Car"
 
 export class Game {
