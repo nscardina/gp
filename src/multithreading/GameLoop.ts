@@ -2,15 +2,17 @@ import { isDebug, setDebug } from "../Debug"
 import { PointDistanceToPolygon } from "../geometry/IntersectionAlgorithms"
 import type Polygon from "../geometry/Polygon"
 import { renderLapCounter } from "../gui/LapCounter"
-import { renderResultsScreen } from "../gui/ResultsScreen"
+import { getPoints, renderResultsScreen } from "../gui/ResultsScreen"
 import { renderSpeedometer } from "../gui/Speedometer"
 import { makeCountdownFadingUIRenderTask } from "../menu/Countdown"
+import { getName } from "../physics/Car"
 import { Delay } from "../util/Delay"
 import type { CourseState } from "./CourseState"
 import FadingUIRenderTask from "./FadingUIRenderTask"
 import { FPSCounter } from "./FPSCounter"
 import type { GlobalState } from "./GlobalState"
 import type { GrandPrixState } from "./GrandPrixState"
+import { IPCDisplayNextRaceButton, IPCShowGPResults, type IPCDisplayGPResultsObject } from "./IPC"
 
 export const DESIRED_FPS = 120
 export const DESIRED_MS_PER_TICK = 1000 / DESIRED_FPS
@@ -25,11 +27,18 @@ type RenderInfo = {
 
 let fadingUIRenderTasks: FadingUIRenderTask[] = []
 
+let oldRequestId: number | null = null;
+
 export const makeGameLoop = (
     globalState: GlobalState, 
     gpState: GrandPrixState,
     courseState: CourseState
 ): FrameRequestCallback => {
+
+    if (oldRequestId !== null) {
+        cancelAnimationFrame(oldRequestId)
+        oldRequestId = null
+    }
 
     const gameLoop: FrameRequestCallback = (timestamp: number) => {
         const deltaTime = timestamp - lastTime
@@ -41,7 +50,7 @@ export const makeGameLoop = (
 
         render(renderInfo, globalState, gpState, courseState)
 
-        requestAnimationFrame(gameLoop)
+        oldRequestId = requestAnimationFrame(gameLoop)
     }
 
     return gameLoop
@@ -87,12 +96,16 @@ function update(
 
     const debugOn = globalState.keyPressedMap.get(globalState.keybindMap.get("DEBUG_ACTIVATE")!)
     const debugOff = globalState.keyPressedMap.get(globalState.keybindMap.get("DEBUG_DEACTIVATE")!)
+    const debugSkipToResults = globalState.keyPressedMap.get(globalState.keybindMap.get("DEBUG_SKIP_TO_RESULTS")!)
 
     if (debugOn) {
         setDebug(true)
     }
     if (debugOff) {
         setDebug(false)
+    }
+    if (debugSkipToResults) {
+        courseState.phase = "results_screen"
     }
 
     const { course, playerCar, cars } = courseState
@@ -153,7 +166,31 @@ function update(
             car.aiCarUpdate(deltaTime, course.collisionAreas, course.aiPathMarkers, cars, course.checkpoints)
         }
 
-        
+        gpState.scores.forEach((value, key) => {
+            if (gpState.currentRaceNumber === value.length) {
+                const carObj = cars.filter(c => c.imagePath === key)[0]!
+                value.push(getPoints(carObj.currentPlace))
+                console.log(`${carObj.imagePath}`)
+            }
+        })
+
+        // if the last race was just completed, show the "Next" button to finish the GP
+        if (gpState.currentRaceNumber + 1 === gpState.courses.length && !courseState.nextRaceButtonShown) {
+            const totals = gpState.cars.map(car => ({name: getName(car), points: gpState.scores.get(car)!.reduce((acc, num) => acc + num)}))
+            totals.sort((a, b) => b.points - a.points)
+
+            const message: IPCDisplayGPResultsObject = {
+                type: IPCShowGPResults,
+                carPointTotals: totals,
+                playerFinishingPosition: totals.indexOf(totals.filter(value => value.name === getName(playerCar.imagePath))[0])
+            }
+            postMessage(message)
+            courseState.nextRaceButtonShown = true
+        // otherwise show the "next race" button to go to the next race
+        } else if (!courseState.nextRaceButtonShown) {
+            postMessage({ type: IPCDisplayNextRaceButton })
+            courseState.nextRaceButtonShown = true
+        }
     }
     
     return null
@@ -186,6 +223,7 @@ function render(
 
     if (courseState.phase === "results_screen") {
         renderResultsScreen(globalState, courseState)
+
     }
 
     setDebugText(courseState)

@@ -54,6 +54,8 @@ export default class Car extends PhysicsObject {
      */
     #name: string
 
+    #imagePath: CarImagePath
+
     /**
      * This car's stats.
      */
@@ -131,6 +133,8 @@ export default class Car extends PhysicsObject {
 
         this.#name = name
         this.#stats = stats
+        this.#imagePath = color
+
 
         if (angle !== undefined) {
             this.angle = angle
@@ -147,6 +151,10 @@ export default class Car extends PhysicsObject {
         this.#currentPlace = -1
 
         loadImage(color).then(image => this.#image = image)
+    }
+
+    get imagePath(): CarImagePath {
+        return this.#imagePath
     }
 
     get name(): string {

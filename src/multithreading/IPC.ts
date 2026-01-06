@@ -6,6 +6,9 @@ export const IPCKeyUpMessage = "KEY_UP"
 export const IPCInitGPMessage = "INIT_GP"
 export const IPCSetPauseStateMessage = "SET_PAUSE_STATE"
 export const IPCRespawnStartMessage = "RESPAWN_START"
+export const IPCDisplayNextRaceButton = "DISPLAY_NEXT_RACE_BUTTON"
+export const IPCTriggerNextRaceButton = "TRIGGER_NEXT_RACE"
+export const IPCShowGPResults = "DISPLAY_GP_RESULTS"
 
 export type IPCRespawnStartMessageObject = {
     type: typeof IPCRespawnStartMessage
@@ -87,3 +90,50 @@ export function isIPCSetPauseStateMessageObject(object: unknown): object is IPCS
     && "paused" in object
     && typeof(object.paused) === "boolean"
 }
+
+export type IPCDisplayNextRaceMessageObject = {
+    type: typeof IPCDisplayNextRaceButton
+}
+
+export const isIPCDisplayNextRaceMessageObject = (object: unknown): object is IPCDisplayNextRaceMessageObject => (
+    typeof(object) === "object"
+    && object !== null
+    && "type" in object
+    && object.type === IPCDisplayNextRaceButton
+)
+
+export type IPCTriggerNextRaceButtonObject = {
+    type: typeof IPCTriggerNextRaceButton
+}
+
+export const isIPCTriggerNextRaceButtonObject = (object: unknown): object is IPCTriggerNextRaceButtonObject => (
+    typeof(object) === "object"
+    && object !== null
+    && "type" in object
+    && object.type === IPCTriggerNextRaceButton
+)
+
+export type IPCDisplayGPResultsObject = {
+    type: typeof IPCShowGPResults,
+    carPointTotals: {name: string, points: number}[]
+    playerFinishingPosition: number
+}
+
+export const isIPCDisplayGPResultsObject = (object: unknown): object is IPCDisplayGPResultsObject => (
+    typeof(object) === "object"
+    && object !== null
+    && "type" in object
+    && object.type === IPCShowGPResults
+    && "carPointTotals" in object
+    && Array.isArray(object.carPointTotals)
+    && object.carPointTotals.every(obj => (
+        typeof(obj) === "object"
+        && obj !== null
+        && "name" in obj
+        && typeof(obj.name) === "string"
+        && "points" in obj
+        && typeof(obj.points) === "number"
+    ))
+    && "playerFinishingPosition" in object
+    && typeof(object.playerFinishingPosition) === "number"
+)

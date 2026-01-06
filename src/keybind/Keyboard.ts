@@ -13,6 +13,7 @@ type KeybindName = "ACCELERATE"
     | "BOOST"
     | "DEBUG_ACTIVATE"
     | "DEBUG_DEACTIVATE"
+    | "DEBUG_SKIP_TO_RESULTS"
 
 /**
  * Mapping between keybind name and the event.key value.
@@ -38,6 +39,7 @@ export function makeDefaultKeybindMap(): KeybindMap {
     .set("BOOST", "f")
     .set("DEBUG_ACTIVATE", "1")
     .set("DEBUG_DEACTIVATE", "2")
+    .set("DEBUG_SKIP_TO_RESULTS", "3")
 
     return map
 }

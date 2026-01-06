@@ -25,17 +25,40 @@ export function renderResultsScreen(globalState: GlobalState, courseState: Cours
 
     // draw car placement text
     courseState.cars.forEach((car, index) => {
-        const carNameMetrics = ctx.measureText(car.name)
-        const carPlaceMetrics = ctx.measureText(`${car.currentPlace}`)
+        const leftSideText = `${getOrdinal(car.currentPlace)}: ${car.name}`
+        const rightSideText = `${getPoints(car.currentPlace)}`
 
-        const numDots = Math.floor((offscreenCanvas.width - carNameMetrics.width - carPlaceMetrics.width - 20) / dotMetrics.width)
+        const leftSideMetrics = ctx.measureText(leftSideText)
+        const rightSideMetrics = ctx.measureText(rightSideText)
+
+        const numDots = Math.floor((offscreenCanvas.width - leftSideMetrics.width - rightSideMetrics.width - 20) / dotMetrics.width)
 
         ctx.textAlign = "left"
-        ctx.fillText(`${car.name}`, 10, 20 + 10 * index)
+        ctx.fillText(`${leftSideText}`, 10, 20 + 10 * index)
         ctx.textAlign = "right"
-        ctx.fillText(`${". ".repeat(numDots)}${car.currentPlace}`, offscreenCanvas.width - 10, 20 + 10 * index)
+        ctx.fillText(`${". ".repeat(numDots)}${rightSideText}`, offscreenCanvas.width - 10, 20 + 10 * index)
     })
 
     ctx.textAlign = "left"
 
+}
+
+const getOrdinal = (place: number): string => {
+    switch (place) {
+        case 1: return "1st";
+        case 2: return "2nd";
+        case 3: return "3rd";
+        case 4: return "4th";
+    }
+    return "";
+}
+
+export const getPoints = (place: number): number => {
+    switch (place) {
+        case 1: return 5;
+        case 2: return 3;
+        case 3: return 1;
+        case 4: return 0;
+    }
+    return 0;
 }

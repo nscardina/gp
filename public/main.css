@@ -3,6 +3,9 @@
     --chooseCarMenuDisplay: none;
     --gameCanvasDisplay: none;
     --pauseMenuDisplay: none;
+    --nextRaceContainerDisplay: none;
+    --gpFinishButtonContainerDisplay: none;
+    --gpFinalResultsMenuDisplay: none;
 }
 
 body {
@@ -229,6 +232,73 @@ h1 {
 
 #debugText:empty {
     padding: 0px;
+}
+
+#nextRaceContainer {
+    display: var(--nextRaceContainerDisplay);
+    flex-direction: column-reverse;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    font-size: clamp(8pt, 10vw, 60px);
+
+    button {
+        padding-bottom: 10vh;
+    }
+
+}
+
+#grandPrixFinishButtonContainer {
+    display: var(--gpFinishButtonContainerDisplay);
+    font-size: clamp(8pt, 10vw, 60px);
+    flex-direction: column-reverse;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+
+    button {
+        padding-bottom: 10vh;
+    }
+}
+
+#grandPrixFinalResultsContainer {
+    display: var(--gpFinalResultsMenuDisplay);
+    font-size: clamp(8pt, 10vw, 60px);
+    font-family: "press_start";
+    color: rgb(0, 183, 255);
+
+    width: 100%;
+
+    div.row {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        padding: 1rem;
+
+        span.name {
+            display: block;
+            text-align: left;
+        }
+
+        span.points {
+            display: block;
+            text-align: right;
+            margin-left: auto;
+        }
+    }
+
+    div.player {
+        color: rgb(216, 195, 0);
+    }
+
+    
 }
 
 @media screen and (min-width: 600px) {

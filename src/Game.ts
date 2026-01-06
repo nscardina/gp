@@ -1,10 +1,12 @@
 import type { KeybindMap } from "./keybind/Keyboard"
 import { makeDefaultKeybindMap, setKeyListener } from "./keybind/Keyboard"
 import { setupChooseCarMenu } from "./menu/ChooseCarMenu"
+import { setupGPFinishButton, setupNextRaceButton } from "./menu/GameButtons"
+import { displayGPResults } from "./menu/GPResultsScreen"
 import { setupMainMenu } from "./menu/MainMenu"
 import { MenuCSSProperty, setMenuInvisible, setMenuVisible } from "./menu/MenuShared"
 import { setupPauseMenu } from "./menu/PauseMenu"
-import { IPCInitGPMessage, IPCRespawnStartMessage, IPCSetPauseStateMessage } from "./multithreading/IPC"
+import { IPCDisplayNextRaceButton, IPCInitGPMessage, IPCRespawnStartMessage, IPCSetPauseStateMessage, IPCShowGPResults, isIPCDisplayGPResultsObject } from "./multithreading/IPC"
 import { CarImagePath } from "./physics/Car"
 
 export class Game {
@@ -73,6 +75,16 @@ export class Game {
 				this.gameCanvas.classList.add("gp-respawn-fadeout")
 				setTimeout(() => this.gameCanvas.classList.remove("gp-respawn-fadeout"), 1000)
 			}
+
+			if (e.data.type === IPCDisplayNextRaceButton) {
+				setMenuVisible(MenuCSSProperty.NEXT_RACE_CONTAINER, this)
+			}
+
+			if (isIPCDisplayGPResultsObject(e.data)) {
+				console.log("a")
+				setMenuVisible(MenuCSSProperty.GP_FINISH_BUTTON_CONTAINER, this)
+				displayGPResults(e.data, this)
+			}
 			
 		};
 
@@ -133,6 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	setupMainMenu(_gameObject)
 	setupChooseCarMenu(_gameObject)
 	setupPauseMenu(_gameObject)
+	setupNextRaceButton(_gameObject.worker)
+	setupGPFinishButton(_gameObject)
 })
 
 export const gameObject = () => _gameObject

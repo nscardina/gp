@@ -8,7 +8,7 @@ export type GrandPrixState = {
     cars: CarImagePath[],
     playerCar: CarImagePath,
     courses: Course[],
-    scores: Map<CarImagePath, number>
+    scores: Map<CarImagePath, number[]>
 }
 
 export const makeNewGrandPrixState = async(playerCarColor: CarImagePath, grandPrixJsonURL: string): Promise<GrandPrixState> => {
@@ -20,9 +20,9 @@ export const makeNewGrandPrixState = async(playerCarColor: CarImagePath, grandPr
 
     const cars = Object.values(CarImagePath)
     
-    const scores = new Map<CarImagePath, number>()
+    const scores = new Map<CarImagePath, number[]>()
     for (const car of cars) {
-        scores.set(car, 0)
+        scores.set(car, [])
     }
 
     return {

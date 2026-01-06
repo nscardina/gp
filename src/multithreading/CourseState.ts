@@ -6,6 +6,7 @@ export type CourseState = {
     phase: "countdown" | "race" | "results_screen",
     countdownNumber: "GO" | "1" | "2" | "3" | null,
     paused: boolean,
+	nextRaceButtonShown: boolean,
     
     course: Course,
     cars: Car[],
@@ -46,6 +47,7 @@ export const makeNewCourseState = (course: Course, playerCar: CarImagePath, cars
         countdownNumber: "3",
         paused: false,
         course: course,
+		nextRaceButtonShown: false,
         playerCar: playerCarObject,
         cars: [playerCarObject, ...aiCarObjects]
     }

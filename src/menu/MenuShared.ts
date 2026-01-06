@@ -5,10 +5,14 @@ export enum MenuCSSProperty {
     CHOOSE_CAR = "--chooseCarMenuDisplay",
     SETTINGS = "--settingsMenuDisplay",
     GAME_CANVAS = "--gameCanvasDisplay",
-    PAUSE = "--pauseMenuDisplay"
+    PAUSE = "--pauseMenuDisplay",
+    NEXT_RACE_CONTAINER = "--nextRaceContainerDisplay",
+    GP_FINISH_BUTTON_CONTAINER = "--gpFinishButtonContainerDisplay",
+    GP_FINAL_RESULTS_MENU = "--gpFinalResultsMenuDisplay"
 }
 
 export const setMenuInvisible = (cssProperty: MenuCSSProperty) => {
+    // document.documentElement.style.removeProperty(cssProperty)
     document.documentElement.style.setProperty(cssProperty, "none")
 }
 

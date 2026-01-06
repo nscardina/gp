@@ -22,8 +22,8 @@ onmessage = async (e) => {
 
 			countdown(globalState, courseState)
 
-			const gameLoop = makeGameLoop(globalState, gpState, courseState)
-			requestAnimationFrame(gameLoop)
+			const gameloop = makeGameLoop(globalState, gpState, courseState)
+			requestAnimationFrame(gameloop)
 		}
 
 		if (isIPCSetPauseStateMessageObject(e.data) && courseState !== null) {
