@@ -131,7 +131,7 @@ h1 {
 
         .gameLogo {
 
-            --font-size: clamp(8pt, 10vw, 60px);
+            --font-size: clamp(8pt, 10vw, 55px);
             position: absolute;
             top: 50%;
             left: 50%;
@@ -145,6 +145,11 @@ h1 {
             color: black;
             text-shadow: 3px 3px 6px black, -3px -3px 6px black, 3px -3px 6px black, -3px 3px 6px black;
             
+
+
+            .blue {
+                color: rgb(0, 195, 255);
+            }
 
             .green {
                 color: rgb(0, 255, 0);

@@ -284,10 +284,12 @@ export default class Car extends PhysicsObject {
             )
 
             const difference = normalizeNegativePositivePi(targetAngle - this.angle)
-            if (difference > 0) {
+            if (difference > 0.01) {
                 this.angularVelocity += 0.00075 * turningRadiusModifier
-            } else {
+            } else if (difference < -0.01) {
                 this.angularVelocity -= 0.00075 * turningRadiusModifier
+            } else {
+                this.angularVelocity = 0
             }
         }
         
