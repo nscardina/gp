@@ -1,8 +1,10 @@
-# *2D Grand Prix* - a retro racing game
+# [*2D Grand Prix*](https://nscardina.github.io/gp/) - a retro racing game
 
 *2D Grand Prix* is a retro 2D racing videogame. Compete against 3 AI-controlled racers to place first overall in a set of four races. 
 
 *2D Grand Prix* can be played in any web browser. A keyboard is required.
+
+Play it here: [nscardina.github.io/gp/](https://nscardina.github.io/gp/)
 
 ## Development Progress
 
