@@ -528,6 +528,71 @@
                     }
                 ]
             }
+        },
+        {
+            "type": "CAMERA_SHAKE",
+            "shape": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 298,
+                        "y": 169
+                    },
+                    {
+                        "x": 361,
+                        "y": 169
+                    },
+                    {
+                        "x": 361,
+                        "y": 237
+                    },
+                    {
+                        "x": 402,
+                        "y": 278
+                    },
+                    {
+                        "x": 450,
+                        "y": 278
+                    },
+                    {
+                        "x": 450,
+                        "y": 342
+                    },
+                    {
+                        "x": 377,
+                        "y": 342
+                    },
+                    {
+                        "x": 298,
+                        "y": 262
+                    }
+                ]
+            }
+        },
+        {
+            "type": "CAMERA_SHAKE",
+            "shape": {
+                "type": "polygon",
+                "points": [
+                {
+                    "x": 240,
+                    "y": 520
+                },
+                {
+                    "x": 320,
+                    "y": 520
+                },
+                {
+                    "x": 320,
+                    "y": 540
+                },
+                {
+                    "x": 240,
+                    "y": 540
+                }
+            ]
+            }
+            
         }
     ],
     "spawnpoints": [
@@ -565,215 +630,410 @@
         }
     ],
     "aiPathMarkers": [
-    {
-      "point": { "x": 90, "y": 186 },
-      "number": 0,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 90, "y": 130 },
-      "number": 1,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 140, "y": 90 },
-      "number": 2,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 190, "y": 90 },
-      "number": 3,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 235, "y": 110 },
-      "number": 4,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 300, "y": 110 },
-      "number": 5,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 330, "y": 170 },
-      "number": 6,
-      "lockedPath": { "pathNum": 8, "endPath": false }
-    },
-    {
-      "point": { "x": 400, "y": 100 },
-      "number": 6,
-      "lockedPath": { "pathNum": 1, "endPath": false }
-    },
-    {
-      "point": { "x": 330, "y": 260 },
-      "number": 7,
-      "lockedPath": { "pathNum": 8, "endPath": false }
-    },
-    {
-      "point": { "x": 500, "y": 190 },
-      "number": 7,
-      "lockedPath": { "pathNum": 1, "endPath": false }
-    },
-    {
-      "point": { "x": 400, "y": 310 },
-      "number": 8,
-      "lockedPath": { "pathNum": 8, "endPath": false }
-    },
-    {
-      "point": { "x": 505, "y": 240 },
-      "number": 8,
-      "lockedPath": { "pathNum": 1, "endPath": false }
-    },
-    {
-      "point": { "x": 500, "y": 310 },
-      "number": 9,
-      "lockedPath": { "pathNum": 8, "endPath": true }
-    },
-    {
-      "point": { "x": 530, "y": 360 },
-      "number": 9,
-      "lockedPath": { "pathNum": 1, "endPath": true }
-    },
-    {
-      "point": { "x": 530, "y": 515 },
-      "number": 10,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 480, "y": 550 },
-      "number": 11,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 170, "y": 550 },
-      "number": 12,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 90, "y": 470 },
-      "number": 13,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 90, "y": 400 },
-      "number": 14,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 70, "y": 350 },
-      "number": 15,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 70, "y": 280 },
-      "number": 16,
-      "lockedPath": null
-    },
-    {
-      "point": { "x": 90, "y": 240 },
-      "number": 17,
-      "lockedPath": null
-    }
-  ],
-  "checkpoints": [
-    {
-      "id": 0,
-      "respawnPoint": { "x": 90, "y": 218 },
-      "respawnAngle": 4.712,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 0, "y": 180 },
-          { "x": 0, "y": 192 },
-          { "x": 201, "y": 192 },
-          { "x": 201, "y": 180 }
-        ]
-      }
-    },
-    {
-      "id": 1,
-      "respawnPoint": { "x": 250, "y": 110 },
-      "respawnAngle": 0,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 250, "y": 0 },
-          { "x": 250, "y": 200 },
-          { "x": 262, "y": 200 },
-          { "x": 262, "y": 0 }
-        ]
-      }
-    },
-    {
-      "id": 2,
-      "respawnPoint": { "x": 330, "y": 230 },
-      "respawnAngle": 0.785,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 290, "y": 230 },
-          { "x": 290, "y": 242 },
-          { "x": 370, "y": 242 },
-          { "x": 370, "y": 230 }
-        ]
-      }
-    },
-    {
-      "id": 2,
-      "respawnPoint": { "x": 330, "y": 230 },
-      "respawnAngle": 0.785,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 410, "y": 0 },
-          { "x": 410, "y": 230 },
-          { "x": 422, "y": 230 },
-          { "x": 422, "y": 0 }
-        ]
-      }
-    },
-    {
-      "id": 3,
-      "respawnPoint": { "x": 530, "y": 375 },
-      "respawnAngle": 1.571,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 410, "y": 375 },
-          { "x": 410, "y": 387 },
-          { "x": 640, "y": 387 },
-          { "x": 640, "y": 375 }
-        ]
-      }
-    },
-    {
-      "id": 4,
-      "respawnPoint": { "x": 300, "y": 550 },
-      "respawnAngle": 3.142,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 300, "y": 500 },
-          { "x": 300, "y": 640 },
-          { "x": 312, "y": 640 },
-          { "x": 312, "y": 500 }
-        ]
-      }
-    },
-    {
-      "id": 5,
-      "respawnPoint": { "x": 70, "y": 350 },
-      "respawnAngle": 4.712,
-      "hitbox": {
-        "type": "polygon",
-        "points": [
-          { "x": 0, "y": 350 },
-          { "x": 0, "y": 362 },
-          { "x": 160, "y": 362 },
-          { "x": 160, "y": 350 }
-        ]
-      }
-    }
-  ]
+        {
+            "point": {
+                "x": 90,
+                "y": 186
+            },
+            "number": 0,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 90,
+                "y": 130
+            },
+            "number": 1,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 140,
+                "y": 90
+            },
+            "number": 2,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 190,
+                "y": 90
+            },
+            "number": 3,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 235,
+                "y": 110
+            },
+            "number": 4,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 300,
+                "y": 110
+            },
+            "number": 5,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 330,
+                "y": 170
+            },
+            "number": 6,
+            "lockedPath": {
+                "pathNum": 8,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 400,
+                "y": 100
+            },
+            "number": 6,
+            "lockedPath": {
+                "pathNum": 1,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 330,
+                "y": 260
+            },
+            "number": 7,
+            "lockedPath": {
+                "pathNum": 8,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 500,
+                "y": 190
+            },
+            "number": 7,
+            "lockedPath": {
+                "pathNum": 1,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 400,
+                "y": 310
+            },
+            "number": 8,
+            "lockedPath": {
+                "pathNum": 8,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 505,
+                "y": 240
+            },
+            "number": 8,
+            "lockedPath": {
+                "pathNum": 1,
+                "endPath": false
+            }
+        },
+        {
+            "point": {
+                "x": 500,
+                "y": 310
+            },
+            "number": 9,
+            "lockedPath": {
+                "pathNum": 8,
+                "endPath": true
+            }
+        },
+        {
+            "point": {
+                "x": 530,
+                "y": 360
+            },
+            "number": 9,
+            "lockedPath": {
+                "pathNum": 1,
+                "endPath": true
+            }
+        },
+        {
+            "point": {
+                "x": 530,
+                "y": 515
+            },
+            "number": 10,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 480,
+                "y": 550
+            },
+            "number": 11,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 170,
+                "y": 550
+            },
+            "number": 12,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 90,
+                "y": 470
+            },
+            "number": 13,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 90,
+                "y": 400
+            },
+            "number": 14,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 70,
+                "y": 350
+            },
+            "number": 15,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 70,
+                "y": 280
+            },
+            "number": 16,
+            "lockedPath": null
+        },
+        {
+            "point": {
+                "x": 90,
+                "y": 240
+            },
+            "number": 17,
+            "lockedPath": null
+        }
+    ],
+    "checkpoints": [
+        {
+            "id": 0,
+            "respawnPoint": {
+                "x": 90,
+                "y": 218
+            },
+            "respawnAngle": 4.712,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 0,
+                        "y": 180
+                    },
+                    {
+                        "x": 0,
+                        "y": 192
+                    },
+                    {
+                        "x": 201,
+                        "y": 192
+                    },
+                    {
+                        "x": 201,
+                        "y": 180
+                    }
+                ]
+            }
+        },
+        {
+            "id": 1,
+            "respawnPoint": {
+                "x": 250,
+                "y": 110
+            },
+            "respawnAngle": 0,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 250,
+                        "y": 0
+                    },
+                    {
+                        "x": 250,
+                        "y": 200
+                    },
+                    {
+                        "x": 262,
+                        "y": 200
+                    },
+                    {
+                        "x": 262,
+                        "y": 0
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "respawnPoint": {
+                "x": 330,
+                "y": 230
+            },
+            "respawnAngle": 0.785,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 290,
+                        "y": 230
+                    },
+                    {
+                        "x": 290,
+                        "y": 242
+                    },
+                    {
+                        "x": 370,
+                        "y": 242
+                    },
+                    {
+                        "x": 370,
+                        "y": 230
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "respawnPoint": {
+                "x": 330,
+                "y": 230
+            },
+            "respawnAngle": 0.785,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 410,
+                        "y": 0
+                    },
+                    {
+                        "x": 410,
+                        "y": 230
+                    },
+                    {
+                        "x": 422,
+                        "y": 230
+                    },
+                    {
+                        "x": 422,
+                        "y": 0
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "respawnPoint": {
+                "x": 530,
+                "y": 375
+            },
+            "respawnAngle": 1.571,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 410,
+                        "y": 375
+                    },
+                    {
+                        "x": 410,
+                        "y": 387
+                    },
+                    {
+                        "x": 640,
+                        "y": 387
+                    },
+                    {
+                        "x": 640,
+                        "y": 375
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "respawnPoint": {
+                "x": 300,
+                "y": 550
+            },
+            "respawnAngle": 3.142,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 300,
+                        "y": 500
+                    },
+                    {
+                        "x": 300,
+                        "y": 640
+                    },
+                    {
+                        "x": 312,
+                        "y": 640
+                    },
+                    {
+                        "x": 312,
+                        "y": 500
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "respawnPoint": {
+                "x": 70,
+                "y": 350
+            },
+            "respawnAngle": 4.712,
+            "hitbox": {
+                "type": "polygon",
+                "points": [
+                    {
+                        "x": 0,
+                        "y": 350
+                    },
+                    {
+                        "x": 0,
+                        "y": 362
+                    },
+                    {
+                        "x": 160,
+                        "y": 362
+                    },
+                    {
+                        "x": 160,
+                        "y": 350
+                    }
+                ]
+            }
+        }
+    ]
 }

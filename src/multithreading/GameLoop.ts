@@ -5,7 +5,7 @@ import { renderLapCounter } from "../gui/LapCounter"
 import { getPoints, renderResultsScreen } from "../gui/ResultsScreen"
 import { renderSpeedometer } from "../gui/Speedometer"
 import { makeCountdownFadingUIRenderTask } from "../menu/Countdown"
-import { getName } from "../physics/Car"
+import Car, { getName } from "../physics/Car"
 import { Delay } from "../util/Delay"
 import type { CourseState } from "./CourseState"
 import FadingUIRenderTask from "./FadingUIRenderTask"
@@ -235,9 +235,18 @@ function render(
 function renderCourse(renderInfo: RenderInfo | null, globalState: GlobalState, courseState: CourseState) {
     const { offscreenCanvas, ctx } = globalState
     const { playerCar, course, cars } = courseState
+
+    let shakeX = 0
+    let shakeY = 0
+    if (renderInfo?.shake) {
+        
+        let playerTopSpeedModifier = Math.min(playerCar.velocity / playerCar.maximumVelocity * 1.67, 1)
+        shakeX = Math.random() * 4 * playerTopSpeedModifier
+        shakeY = Math.random() * 4 * playerTopSpeedModifier
+    }
     
-    const x = (offscreenCanvas.width + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
-    const y = (offscreenCanvas.height + ((renderInfo?.shake) ? Math.random() * 4 : 0)) | 0
+    const x = (offscreenCanvas.width + shakeX) | 0
+    const y = (offscreenCanvas.height + shakeY) | 0
 
     course.render(ctx, x, y, playerCar, cars)
 }
