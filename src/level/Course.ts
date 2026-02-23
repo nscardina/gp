@@ -304,17 +304,13 @@ export default class Course {
         const img = sprite.currentImage
 
         if (sprite.repeat) {
-            for (let y = 0; y < sprite.repeatY; y++) {
-                for (let x = 0; x < sprite.repeatX; x++) {
-                    ctx.drawImage(
-                        img, 
-                        sprite.x + x * img.width, 
-                        sprite.y + y * img.height
-                    )
-                }
-            }
+            const pattern = ctx.createPattern(img, "repeat")!
+            ctx.fillStyle = pattern
+            ctx.fillRect(sprite.x, sprite.y, img.width * sprite.repeatX, img.height * sprite.repeatY)
+
+            
         } else {
-            ctx.drawImage(img, sprite.x, sprite.y)
+            ctx.drawImage(img, sprite.x | 0, sprite.y | 0)
         }
 
         ctx.restore()
